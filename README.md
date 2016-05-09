@@ -14,3 +14,4 @@ Preprocessing so far:
 	-	sum_revenue < total_amount
 	-	valid avg_velocity
 	-	valid avg_revenue_per_mile?
+-	Extracted the first week in 2013

@@ -1,4 +1,6 @@
 from rdflib import Graph, Literal, BNode, Namespace, RDF, XSD
+import datetime
+from dateutil import parser
 
 global graph
 graph = Graph();
@@ -20,10 +22,21 @@ DUL = Namespace('http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#')
 def parseDataframe(dataframe):
     initGraph();
 
+
     for index, row in dataframe.iterrows():
-        addToGraph(row)
+
+        date = parser.parse(row['dropoff_datetime'])
+
+        if(date.day == 10):
+            addToGraph(row)
+        elif(date.day == 20):
+            continue
+        elif(date.day > 10):
+            break
 
     return graph;
+
+
 
 def initGraph():
     # Bind Namespace to abbreviation
@@ -43,6 +56,8 @@ def addToGraph(event):
 
     # Time
     t = Literal(event['dropoff_datetime'], datatype=XSD.dateTime)
+    #t = Literal(event['dropoff_datetime'])
+    #print(event['dropoff_datetime'])
     graph.add((oTime, DUL.hasRegionDataValue, t))
 
     # SensorOutput

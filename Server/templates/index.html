@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+    <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+</head>
+<body>
+    <!-- Main Page-->
+    <div data-role="page"  id="startpage" >
+      <div data-role="header" >
+        <h1>A2B</h1>
+      </div>
+
+      <div data-role="main" class="ui-content" data-inset="false">
+          <p>Hallo </p>
+      </div>
+
+    </div>
+
+  	<script type=text/javascript>$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};</script>
+  	<script type=text/javascript src="{{url_for('static', filename='script.js') }}"></script>
+</body>
+
+</html>

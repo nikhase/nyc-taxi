@@ -6,5 +6,4 @@ def search(args):
     result={}
     result['taxi_realtime'] = rt_taxi.search(args)
 
-    #result = { "result": "Hello World"}
     return result

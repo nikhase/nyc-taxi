@@ -95,4 +95,10 @@ def addToGraph(event):
     graph.add((endLocation, GEO.lat, lat))
     graph.add((endLocation, GEO.long, long))
 
+    #Duration
+    dur  = parser.parse(event['dropoff_datetime']) - parser.parse(event['pickup_datetime'])
+    duration = Literal(str(dur), datatype=XSD.float)
+
+    graph.add( (observation, SSN.hasDuration, duration))
+
     return

@@ -4,7 +4,7 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
-    <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
     <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
 </head>
 <body>
@@ -16,9 +16,29 @@
 
       <div data-role="main" class="ui-content" data-inset="false">
           <p>Hallo </p>
+          <a data-role="button" id="nextbtn" href="#secondpage">Next</a>
       </div>
 
+      <div data-role="footer" data-position="fixed">
+        <p id="footer-text" >Footer</p>
+      </div>
     </div>
+
+    <!-- Second Page Page-->
+    <div data-role="page"  id="secondpage" >
+      <div data-role="header" >
+        <h1>A2B</h1>
+      </div>
+
+      <div data-role="main" class="ui-content" data-inset="false">
+          <p>Second Page </p>
+      </div>
+
+      <div data-role="footer" data-position="fixed">
+        <p>Footer</p>
+      </div>
+    </div>
+
 
   	<script type=text/javascript>$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};</script>
   	<script type=text/javascript src="{{url_for('static', filename='script.js') }}"></script>

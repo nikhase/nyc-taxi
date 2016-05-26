@@ -5,7 +5,7 @@ def search(args):
 
     result = {  "seconds": 600 , "accuracy" : 0.72}
 
-    g = Graph()
+    '''g = Graph()
     g.parse("data.ttl", format='n3')
     qres = g.query(
         """
@@ -17,10 +17,8 @@ def search(args):
 
     print(len(qres))
     for row in qres:
-        print(str(row))
+        print(str(row))'''
 
     return result
 
 
-
-search("hi")

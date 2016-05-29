@@ -9,35 +9,44 @@
 </head>
 <body>
     <!-- Main Page-->
-    <div data-role="page"  id="startpage" >
-      <div data-role="header" >
-        <h1>A2B</h1>
-      </div>
+ <div data-role="page" id="startpage">
+	<div data-role="header">
+		<h1>Beam Me from A to B</h1>
+		<div class="ui-nodisc-icon">
+			<a href="#Page2" class="ui-btn ui-btn-inline ui-btn-icon-right ui-icon-gear ui-btn-right">Options</a>
+		</div>
+	</div>
 
-      <div data-role="main" class="ui-content" data-inset="false">
-          <p>Hallo </p>
-          <a data-role="button" id="nextbtn" href="#secondpage">Next</a>
-      </div>
+	<div date-role="main" class="ui-content">
 
-      <div data-role="footer" data-position="fixed">
-        <p id="footer-text" >Footer</p>
-      </div>
+     	<label for="txtstart"><b>Start Location</b></label>
+     	<input type="text" name="location" id="txtstart" placeholder="Set your starting location" value="" data-mini="true" maxlength="80" data-wrapper-class="ui-custom" />
+
+		<label for="txtend"><b>End Location</b></label>
+		<input type="text" name="end_location" id="txtend" placeholder="Set your end location" value="" data-mini="true" maxlength="80" data-wrapper-class="ui-custom" />
+
+		<a href="#secondpage" class="ui-btn" id="btnGetGeo">Search</a>
     </div>
+
+	<div data-role="footer" data-position="fixed">
+		<h4>Page Footer</h4>
+	</div>
+</div>
 
     <!-- Second Page Page-->
-    <div data-role="page"  id="secondpage" >
-      <div data-role="header" >
-        <h1>A2B</h1>
-      </div>
+<div data-role="page" id="secondpage">
+	<div data-role="header">
+		<p align="middle">Result<p>
+		<a href="#startpage" class="ui-btn ui-btn-icon-left ui-icon-back ui-btn-left">Back</a>
+	</div>
 
-      <div data-role="main" class="ui-content" data-inset="false">
-          <p>Second Page </p>
-      </div>
+	<div date-role="main" class="ui-content" id="resultDiv">
+	</div>
 
-      <div data-role="footer" data-position="fixed">
-        <p>Footer</p>
-      </div>
-    </div>
+	<div data-role="footer" data-position="fixed">
+		<h4>Page Footer</h4>
+	</div>
+</div>
 
 
   	<script type=text/javascript>$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};</script>

@@ -19,11 +19,11 @@
 
 	<div date-role="main" class="ui-content">
 
-     	<label for="txtstart"><b>Start Location</b></label>
-     	<input type="text" name="location" id="txtstart" placeholder="Set your starting location" value="" data-mini="true" maxlength="80" data-wrapper-class="ui-custom" />
+     	<label for="autocomplete"><b>Start Location</b></label>
+     	<input type="text" onFocus="geolocate()" name="location" id="autocomplete" placeholder="Set your starting location" value="" data-mini="true" maxlength="80" data-wrapper-class="ui-custom" />
 
-		<label for="txtend"><b>End Location</b></label>
-		<input type="text" name="end_location" id="txtend" placeholder="Set your end location" value="" data-mini="true" maxlength="80" data-wrapper-class="ui-custom" />
+		<label for="autocomplete2"><b>End Location</b></label>
+		<input type="text" onFocus="geolocate()" name="end_location" id="autocomplete2" placeholder="Set your end location" value="" data-mini="true" maxlength="80" data-wrapper-class="ui-custom" />
 
 		<a href="#secondpage" class="ui-btn" id="btnGetGeo">Search</a>
     </div>
@@ -40,8 +40,14 @@
 		<a href="#startpage" class="ui-btn ui-btn-icon-left ui-icon-back ui-btn-left">Back</a>
 	</div>
 
-	<div date-role="main" class="ui-content" id="resultDiv">
-	</div>
+	<div date-role="main" class="ui-content">
+    	<div id="resultDivStart">
+        </div>
+        <br>
+        <div id="resultDivEnd">
+        </div>
+    </div>
+
 
 	<div data-role="footer" data-position="fixed">
 		<h4>Page Footer</h4>
@@ -51,6 +57,8 @@
 
   	<script type=text/javascript>$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};</script>
   	<script type=text/javascript src="{{url_for('static', filename='script.js') }}"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBIrSNzkA1opCqivwJYXXRwEJkwKPKKCjE&libraries=places&callback=initAutocomplete"
+        async defer></script>
 </body>
 
 </html>

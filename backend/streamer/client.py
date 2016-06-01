@@ -6,7 +6,7 @@ import pandas as pd
 #
 root="/Users/larshelin/Documents/Studium/Master/Semester 3/Seminar/Data/oneweekfrom20130107.csv"
 ip="127.0.0.1"
-speed=0.1
+speed=0.5
 
 #lt_1 = time.strftime("%d.%m.%Y %H:%M:%S")
 #print lt_1

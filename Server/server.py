@@ -2,6 +2,7 @@
 import os
 from flask import Flask, jsonify, render_template, request, abort, send_from_directory, Response
 import application.application as ap
+from RealtimeDB.realtimedb import RealtimeDB
 
 app = Flask(__name__)
 
@@ -31,8 +32,6 @@ def get_info():
     except IOError:
         return badRequest("Sorry, one of the parameters was not submitted correctly!")
 
-
-
 #Return a 400 with a customized message
 def badRequest(message ='No Error message!'):
     #Transfer message
@@ -44,5 +43,15 @@ def badRequest(message ='No Error message!'):
 
 #start server
 if __name__ == '__main__':
-    app.debug = True
+    #Flag to use realtime Data
+    realtime = False
+
+    if realtime:
+        #Location for the csv File
+        path = "/Users/larshelin/Documents/Studium/Master/Semester 3/Seminar/Data/oneweekfrom20130107.csv"
+
+        #Configures, Start and Runs the Realtime Data stream
+        RealtimeDB(path, startIndex=50000, rows=20000, speed=2)
+
+    #app.debug = True
     app.run()

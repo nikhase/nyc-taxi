@@ -1,6 +1,7 @@
-from rdflib import Graph, Literal, BNode, Namespace, RDF, XSD, URIRef
-import queries
 from dateutil import parser
+from rdflib import Graph, Literal, BNode, Namespace, RDF, XSD, URIRef
+
+import queries
 
 global SSN
 global GEO

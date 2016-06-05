@@ -2,10 +2,10 @@ import math
 
 # degrees to radians
 def deg2rad(degrees):
-    return math.pi*degrees/180.0
+    return float(math.pi*degrees/180.0)
 # radians to degrees
 def rad2deg(radians):
-    return 180.0*radians/math.pi
+    return float(180.0*radians/math.pi)
 
 # Semi-axes of WGS-84 geoidal reference
 WGS84_a = 6378137.0  # Major semiaxis [m]

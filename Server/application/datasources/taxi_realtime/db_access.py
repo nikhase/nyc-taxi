@@ -20,8 +20,8 @@ def getData(coordinates, radius):
         res['dest_lat'] = str(result[3])
         res['dest_long'] = str(result[4])
         dictResults.append(res)
-        print str(result[1]) + ", " + str(result[2])
-        print str(result[3]) + ", " + str(result[4])
+        #print str(result[1]) + ", " + str(result[2])
+        #print str(result[3]) + ", " + str(result[4])
 
     g.close()
     return json.dumps(dictResults)
@@ -33,7 +33,7 @@ def duration(originLat, originLong, destLat, destLong, radius=100):
             PREFIX ssn: <https://www.w3.org/2005/Incubator/ssn/ssnx/ssn#>
             PREFIX geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>
             PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-            select ?dur ?orLat ?orLong ?destLat ?destLong
+            select distinct ?dur ?orLat ?orLong ?destLat ?destLong
             WHERE{
             ?obs ssn:hasDuration ?dur.
             ?obs ssn:observationResult ?oRes.

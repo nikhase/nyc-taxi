@@ -23,7 +23,11 @@ def get_info():
         params['dest_lat'] = request.args.get('ltb')
         params['dest_lon'] = request.args.get('lgb')
 
-        result = ap.search(params)
+        try:
+            result = ap.search(params)
+        except Exception as e:
+            print str(e)
+            return abort(500)
 
         if not result is None:
             return jsonify(result)
@@ -55,5 +59,5 @@ if __name__ == '__main__':
         # Configures, Start and Runs the Realtime Data stream
         RealtimeDB(path, startIndex=50000, rows=20000, speed=2, reset=True)
 
-    # app.debug = True
+    #app.debug = True
     app.run()

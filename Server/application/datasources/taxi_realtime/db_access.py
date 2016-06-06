@@ -1,16 +1,32 @@
 from rdflib import Graph, URIRef
+import rdflib.plugins.sparql.results.jsonlayer as jl
 import json
 import geotool as gt
+import datetime as dt
 
 
-def getData(coordinates, radius):
+def getData(coordinates, radius, online=True):
+    # Using the online Flag to load either a local file or use a DB
+
     #Connecting to DB
-    configString = "dbname=postgres user=raccess password=read"
-    g = Graph('PostgreSQL', identifier=URIRef("http://example.com/g1"))
-    g.open(configString, create=False)
+    if online:
+        t1 = dt.datetime.now()
+        configString = "dbname=postgres user=raccess password=read"
+        g = Graph('PostgreSQL', identifier=URIRef("http://example.com/g1"))
+        g.open(configString, create=False)
+        print "Getting the graph took: " + str((dt.datetime.now() - t1).seconds)
+    else:
+        path = "/Users/larshelin/Documents/PycharmProjects/CEP/nyc-taxi/Server/application/datasources/taxi_realtime/output.txt"
+        print str(path)
+        g = Graph()
+        g.load(str(path), format="turtle")
+        print str(g.__len__() / 11)
+
+
+    print "Traversing the graph (size: " + str(g.__len__()) + ")"
 
     results = g.query(duration(coordinates['start_lat'], coordinates['start_lon'], coordinates['dest_lat'], coordinates['dest_lon'], radius))
-
+    t1 = dt.datetime.now()
     dictResults = []
     for result in results:
         res = {}
@@ -20,9 +36,8 @@ def getData(coordinates, radius):
         res['dest_lat'] = str(result[3])
         res['dest_long'] = str(result[4])
         dictResults.append(res)
-        #print str(result[1]) + ", " + str(result[2])
-        #print str(result[3]) + ", " + str(result[4])
 
+    print "Traversing took: " + str((dt.datetime.now() - t1).seconds)
     g.close()
     return json.dumps(dictResults)
 
@@ -53,6 +68,6 @@ def duration(originLat, originLong, destLat, destLong, radius=100):
     query += "FILTER ( (?destLat >= " + str(boundsDest[0]) + ") && (?destLat <= " + str(boundsDest[2]) + ") "
     query += "&& (?destLong >= " + str(boundsDest[1]) + ") && (?destLong <= " + str(boundsDest[3]) + ") )"
 
-    query += "} LIMIT 100"
+    query += "} LIMIT 10"
     # print query
     return query

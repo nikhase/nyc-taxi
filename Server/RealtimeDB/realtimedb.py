@@ -28,21 +28,28 @@ class RealtimeDB(object):
     def resetdatabase(self):
         # Try to connect
         try:
-            conn = psycopg2.connect("dbname='postgres' user='postgres' password='admin'")
+            #config = "database='postgres' user='postgres' password='admin' host='127.0.0.1' port='5432'"
+            conn = psycopg2.connect("host='127.0.0.1' dbname='postgres' user='postgres' password='admin'")
+            #conn = psycopg2.connect(config)
         except:
             print "I am unable to connect to the database."
+            raise IOError
 
         # Get the cursor
         cur = conn.cursor()
         try:
 
             # Clear tables
-            cur.execute("""DELETE  FROM public.kb_bec6803d52_asserted_statements;""")
-            cur.execute("""DELETE  FROM public.kb_bec6803d52_literal_statements;""")
-            cur.execute("""DELETE  FROM public.kb_bec6803d52_namespace_binds;""")
-            cur.execute("""DELETE  FROM public.kb_bec6803d52_quoted_statements;""")
-            cur.execute("""DELETE  FROM public.kb_bec6803d52_type_statements;""")
+            cur.execute("DELETE  FROM public.kb_bec6803d52_asserted_statements;")
+            cur.execute("DELETE  FROM public.kb_bec6803d52_literal_statements;")
+            cur.execute("DELETE  FROM public.kb_bec6803d52_namespace_binds;")
+            cur.execute("DELETE  FROM public.kb_bec6803d52_quoted_statements;")
+            cur.execute("DELETE  FROM public.kb_bec6803d52_type_statements;")
 
+            conn.commit()
+            conn.close()
             print("Database has been reset.")
-        except Exception:
+
+        except Exception as e:
             print "Could not DELETE"
+            raise e

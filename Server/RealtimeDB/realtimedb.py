@@ -1,5 +1,6 @@
 from Components import GraphHandler, Refresher, Reader
 import psycopg2
+import datetime as dt
 
 class RealtimeDB(object):
 
@@ -10,20 +11,24 @@ class RealtimeDB(object):
         self.rows = rows
         self.speed = speed
         self.cacheSize = cacheSize
+        self.basetime = dt.datetime.now()
 
         if reset:
             # Reset the Database
             self.resetdatabase()
 
         #Start
-        self.run()
+        return self.run()
 
     def run(self):
         print "Started Realtime DB"
         #Start Reader and Refresher
         reader = Reader(self.root, startIndex=self.startIndex, rows=self.rows, speed=self.speed)
         r = Refresher(sleep=60)
-        GraphHandler((reader, r), cache_size=self.cacheSize, speed=self.speed)
+        graph = GraphHandler((reader, r), cache_size=self.cacheSize, speed=self.speed)
+        self.basetime = graph.baseTime
+
+
 
     def resetdatabase(self):
         # Try to connect

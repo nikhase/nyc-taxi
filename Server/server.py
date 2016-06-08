@@ -3,6 +3,7 @@ from flask import Flask, jsonify, render_template, request, abort, send_from_dir
 import application.application as ap
 from RealtimeDB.realtimedb import RealtimeDB
 
+
 app = Flask(__name__)
 
 
@@ -50,14 +51,17 @@ def badRequest(message ='No Error message!'):
 # Start server
 if __name__ == '__main__':
     # Flag to use realtime Data
-    realtime = False
+    realtime = True
+
+    # Server needs to keep track of time
 
     if realtime:
         # Location for the csv File
         path = "/Users/larshelin/Documents/Studium/Master/Semester 3/Seminar/Data/oneweekfrom20130107.csv"
 
         # Configures, Start and Runs the Realtime Data stream
-        RealtimeDB(path, startIndex=50000, rows=20000, speed=2, reset=True)
+        rtdb = RealtimeDB(path, startIndex=50000, rows=20000, speed=2, reset=True)
+        print "Server Basetime: " + str(rtdb.basetime)
 
     #app.debug = True
     app.run()

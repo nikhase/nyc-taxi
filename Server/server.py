@@ -16,6 +16,9 @@ def index():
 @app.route('/search')
 def get_info():
 
+
+    # Example Query:
+    # http://localhost:5000/search?lta=40.770475&lga=-73.879504&ltb=40.751573&lgb=-73.991857
     try:
         # Get the Search Parameters
         params = {}

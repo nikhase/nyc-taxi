@@ -2,6 +2,7 @@
 from flask import Flask, jsonify, render_template, request, abort, send_from_directory, Response
 import application.application as ap
 from RealtimeDB.realtimedb import RealtimeDB
+import datetime as dt
 
 
 app = Flask(__name__)
@@ -23,9 +24,29 @@ def get_info():
 
         params['dest_lat'] = request.args.get('ltb')
         params['dest_lon'] = request.args.get('lgb')
+        params['timestamp'] = str(basetime)
 
         try:
-            result = ap.search(params)
+            if not hardcodedResult:
+                result = ap.search(params)
+            else:
+
+                # Create Hard Coded Result
+                result ={}
+                taxi = {}
+                taxi['historic'] = "00:08:55"
+                taxi['realtime'] = "00:10:12"
+                taxi['price'] = "12,25USD"
+                bike = {}
+                bike['historic'] = "00:18:55"
+                bike['price'] = "1,00USD"
+                info = {}
+                info = params;
+                result['taxi'] = taxi
+                result['bike'] = bike
+                result['info'] = info
+                print result
+
         except Exception as e:
             print str(e)
             return abort(500)
@@ -51,7 +72,8 @@ def badRequest(message ='No Error message!'):
 # Start server
 if __name__ == '__main__':
     # Flag to use realtime Data
-    realtime = True
+    realtime = False
+    hardcodedResult = True
 
     # Server needs to keep track of time
 
@@ -63,5 +85,6 @@ if __name__ == '__main__':
         rtdb = RealtimeDB(path, startIndex=50000, rows=20000, speed=2, reset=True)
         print "Server Basetime: " + str(rtdb.basetime)
 
+    basetime = dt.datetime.now()
     #app.debug = True
     app.run()

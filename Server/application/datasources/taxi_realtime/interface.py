@@ -17,7 +17,7 @@ def search(args):
 
     # Get the results
     results = json.loads(db_access.getData(args, radius=radius, online=True))
-    print str(results)
+    #print str(results)
 
     if len(results) == 0:
         return "no result found"
@@ -34,9 +34,8 @@ def search(args):
         deviation = distance.vincenty(a, start) + distance.vincenty(b, dest)
 
         res['deviation'] = deviation
-        t = dt.datetime.strptime(res['duration'], "%H:%M:%S")
-        delta = dt.timedelta(hours=t.hour, minutes=t.minute, seconds=t.second)
-        res['adjustedDurationS'] = (atob/ dist.km) * delta.seconds
+        delta = res['duration']
+        res['adjustedDurationS'] = (atob/ dist.km) * int(delta)
 
     devSum = sum(res['deviation'].km for res in results)
     durSum = 0
@@ -64,4 +63,5 @@ params['dest_lat'] = 40.751573
 params['dest_lon'] = -73.991857
 
 
-result = search(params)'''
+result = search(params)
+print result'''

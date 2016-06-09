@@ -20,7 +20,7 @@ def get_info():
 
         params['dest_lat'] = request.args.get('ltb')
         params['dest_lon'] = request.args.get('lgb')
-
+        print(params)
         result = ap.search(params)
 
         if not result is None:

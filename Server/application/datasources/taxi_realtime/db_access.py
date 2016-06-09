@@ -10,10 +10,20 @@ def getData(coordinates, radius, online=True):
     conn = psycopg2.connect("host='127.0.0.1' dbname='realtime_sql' user='raccess' password='read'")
     cur = conn.cursor()
 
-    sqlStr = duration(coordinates['start_lat'], coordinates['start_lon'], coordinates['dest_lat'],
-                      coordinates['dest_lon'], radius)
-    cur.execute(sqlStr)
-    rows = cur.fetchall()
+    radius = 0.2
+
+    for i in range(9):
+        sqlStr = duration(coordinates['start_lat'], coordinates['start_lon'], coordinates['dest_lat'],
+                          coordinates['dest_lon'], radius)
+        cur.execute(sqlStr)
+        rows = cur.fetchall()
+
+        if len(rows) >= 1:
+            print "Radius: " + str(radius)
+            break
+        else:
+            radius += 0.1
+
     conn.commit()
     conn.close()
 

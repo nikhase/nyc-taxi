@@ -35,7 +35,7 @@ def removeDate(timestamp):
     formTimestamp = timestamp.strftime("%Y-%m-%d %H:%M:%S");
     sqlStr = "DELETE FROM public.events " \
              "WHERE timestamp < to_timestamp(\'" + formTimestamp+ "\', \'YYYY-MM-DD HH24:MI:SS\') ;"
-    print sqlStr
+    #print sqlStr
     cur.execute(sqlStr)
 
     conn.commit()

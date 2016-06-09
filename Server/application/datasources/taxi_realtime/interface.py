@@ -50,7 +50,7 @@ def search(args):
     result['estimatedDuration'] = str(dt.timedelta(seconds=durSum))
     result['numberOfResults'] = str(len(results))
 
-    return result
+    return result['estimatedDuration']
 
 
 # Testing stuff

@@ -22,10 +22,10 @@ def get_info():
     try:
         # Get the Search Parameters
         params = {}
-        params['start_lat'] = request.args.get('lta')
+        params['start_lat'] = request.args.get('lata')
         params['start_lon'] = request.args.get('lga')
 
-        params['dest_lat'] = request.args.get('ltb')
+        params['dest_lat'] = request.args.get('latb')
         params['dest_lon'] = request.args.get('lgb')
         params['timestamp'] = str(basetime)
 

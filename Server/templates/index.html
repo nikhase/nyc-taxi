@@ -6,26 +6,77 @@
     <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
     <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+    <style>
+        #section1,
+        #section2 {
+            position: fixed;
+            left: 0;
+            right: 0;
+            height: 40%;
+        }
+        #section1 {
+            top: 60px;
+            background-color: orange;
+        }
+        #section2 {
+            bottom: 60px;
+            background-color: green;
+        }
+        #taxi, #bike {
+            margin: 5px;
+            margin-top: 50px;
+            height: 100px;
+        }
+        #taxipng, #bikepng {
+            height: 80px;
+            width: 80px;
+            float: left;
+            margin: 20px;
+        }
+    </style>
 </head>
 <body>
     <!-- Main Page-->
  <div data-role="page" id="startpage">
 	<div data-role="header">
-		<h1>Beam Me from A to B</h1>
-		<div class="ui-nodisc-icon">
-			<a href="#Page2" class="ui-btn ui-btn-inline ui-btn-icon-right ui-icon-gear ui-btn-right">Options</a>
-		</div>
+		<h1>Beam Me from A2B</h1>
 	</div>
 
 	<div date-role="main" class="ui-content">
 
-     	<label for="autocomplete"><b>Start Location</b></label>
-     	<input type="text" onFocus="geolocate()" name="location" id="autocomplete" placeholder="Set your starting location" value="" data-mini="true" maxlength="80" data-wrapper-class="ui-custom" />
+        <div>
+            <label for="autocomplete"><b>Start Location</b></label>
+            <input type="text" onFocus="geolocate()" name="location" id="autocomplete" placeholder="Set your start location" value="" data-mini="true" maxlength="80" data-wrapper-class="ui-custom" />
 
-		<label for="autocomplete2"><b>End Location</b></label>
-		<input type="text" onFocus="geolocate()" name="end_location" id="autocomplete2" placeholder="Set your end location" value="" data-mini="true" maxlength="80" data-wrapper-class="ui-custom" />
+            <label for="autocomplete2"><b>End Location</b></label>
+            <input type="text" onFocus="geolocate()" name="end_location" id="autocomplete2" placeholder="Set your end location" value="" data-mini="true" maxlength="80" data-wrapper-class="ui-custom" />
 
-		<a href="#secondpage" class="ui-btn" id="btnGetGeo">Search</a>
+            <a class="ui-btn" id="btnGetGeo">Search</a> <!-- href="#secondpage" -->
+        </div>
+
+        <div id="taxi">
+
+            <div id="taxipng"></div>
+            <div id="taxioutput"> <!--
+                            <strong>
+                            Histori Time:  00:00:00 <br><br>
+                            Realtime:  00:00:00 <br><br>
+                            Cost:  10 USD
+                            </strong> -->
+            </div>
+        </div>
+        <div id="bike">
+            <div id="bikepng"></div>
+                <div id="bikeoutput"> <!--
+                        <strong>
+                        Historic Time:  00:00:00 <br><br>
+                        Cost:  10 USD
+                        </strong> -->
+                </div>
+
+        </div>
+
+
     </div>
 
 	<div data-role="footer" data-position="fixed">
@@ -45,6 +96,31 @@
         </div>
         <br>
         <div id="resultDivEnd">
+        </div>
+
+        <div id="section1">
+            <img id="png" src="taxi.png" alt="Taxi" height="250" width="250">
+
+                <div>
+                <strong>
+                <br><br><br><br><br><br>Taxi <br><br>
+                Historische Zeit:  00:00:00 <br><br>
+                Echtzeit:  00:00:00 <br><br>
+                Kosten:  10 USD
+                </strong>
+                </div>
+        </div>
+        <div id="section2">
+            <img id="png" src="bike.png" alt="Bike" height="250" width="250">
+
+                <div>
+                <strong>
+               <br><br><br><br><br><br> Fahrrad: <br><br>
+                Zeit:  00:00:00 <br><br>
+                Kosten:  10 USD
+                </strong>
+                </div>
+
         </div>
     </div>
 

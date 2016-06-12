@@ -33,7 +33,7 @@ class GraphHandler:
         threshold = artNow - dt.timedelta(minutes=self.cache_size)
         print artNow
         print("Delete all before: " + str(threshold))
-        post.removeDate(threshold)
+        post.removeFromGraph(threshold)
 
 
     def __addData(self, arg):
@@ -43,7 +43,7 @@ class GraphHandler:
             self.__initialized = True
 
             print "Basetime initialized to " + str(self.baseTime)
-        post.addData(data)
+        post.addToGraph(data)
 
     def __initialize(self, data):
         date = dateutil.parser.parse(data['pickup_datetime'])

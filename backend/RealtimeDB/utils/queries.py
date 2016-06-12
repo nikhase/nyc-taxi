@@ -45,8 +45,43 @@ def duration(originLat, originLong, destLat, destLong, radius=100):
 
 
 
+def getEvents(timestamp):
+
+    query = """
+        PREFIX ssn: <https://www.w3.org/2005/Incubator/ssn/ssnx/ssn#>
+        PREFIX dul: <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#>
+        PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+        SELECT ?obs ?oRes ?ov ?start ?end ?obsTime
+        WHERE {
+            ?obs  rdf:type ?y.
+            ?obs ssn:observationResult ?oRes.
+            ?oRes rdf:type ?sensorOutput.
+            ?oRes ssn:hasValue ?ov.
+            ?ov ssn:hasStartLocation ?start.
+            ?ov ssn:hasEndLocation ?end.
+            ?obs  ssn:observationSamplingTime ?obsTime .
+            ?obsTime dul:hasRegionDataValue ?date.
+            """
+    query += "FILTER ( ?date <\"" + timestamp.strftime("%Y-%m-%dT%H:%M:%S") + "\"^^xsd:dateTime )}"
+    return query
 
 def testQuery():
     query = """
-        """
+                PREFIX ssn: <https://www.w3.org/2005/Incubator/ssn/ssnx/ssn#>
+                PREFIX geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>
+                PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+                select ?timestamp ?dur ?orLat ?orLong ?destLat ?destLong
+                WHERE{
+                ?obs ssn:observationSamplingTime ?st.
+                ?st dul:hasRegionDataValue ?timestamp.
+                ?obs ssn:hasDuration ?dur.
+                ?obs ssn:observationResult ?oRes.
+                ?oRes ssn:hasValue ?ov.
+                ?orLoc geo:lat ?orLat. ?orLoc geo:long ?orLong.
+                ?ov ssn:hasStartLocation ?orLoc.
+                ?ov ssn:hasEndLocation ?destLoc.
+                ?destLoc geo:lat ?destLat.
+                ?destLoc geo:long ?destLong.}
+                ORDER BY ?timestamp
+                LIMIT 10 """
     return query

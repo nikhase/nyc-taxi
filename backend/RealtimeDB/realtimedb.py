@@ -11,29 +11,30 @@ class RealtimeDB(object):
         self.rows = rows
         self.speed = speed
         self.cacheSize = cacheSize
+        self.basetime = dt.datetime.now()
 
         if reset:
             # Reset the Database
             self.resetdatabase()
 
         #Start
-
-        self.run()
+        return self.run()
 
     def run(self):
         print "Started Realtime DB"
         #Start Reader and Refresher
         reader = Reader(self.root, startIndex=self.startIndex, rows=self.rows, speed=self.speed)
         r = Refresher(sleep=60)
-        self.graph = GraphHandler((reader, r), cache_size=self.cacheSize, speed=self.speed)
-        self.initTimestamp = dt.datetime.now()
+        graph = GraphHandler((reader, r), cache_size=self.cacheSize, speed=self.speed)
+        self.basetime = graph.baseTime
+
 
 
     def resetdatabase(self):
         # Try to connect
         try:
             #config = "database='postgres' user='postgres' password='admin' host='127.0.0.1' port='5432'"
-            conn = psycopg2.connect("host='127.0.0.1' dbname='realtime_sql' user='postgres' password='admin'")
+            conn = psycopg2.connect("host='127.0.0.1' dbname='postgres' user='postgres' password='admin'")
             #conn = psycopg2.connect(config)
         except:
             print "I am unable to connect to the database."
@@ -44,7 +45,12 @@ class RealtimeDB(object):
         try:
 
             # Clear tables
-            cur.execute("DELETE  FROM public.events ;")
+            cur.execute("DELETE  FROM public.kb_bec6803d52_asserted_statements;")
+            cur.execute("DELETE  FROM public.kb_bec6803d52_literal_statements;")
+            cur.execute("DELETE  FROM public.kb_bec6803d52_namespace_binds;")
+            cur.execute("DELETE  FROM public.kb_bec6803d52_quoted_statements;")
+            cur.execute("DELETE  FROM public.kb_bec6803d52_type_statements;")
+
             conn.commit()
             conn.close()
             print("Database has been reset.")

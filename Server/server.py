@@ -27,11 +27,16 @@ def get_info():
 
         params['dest_lat'] = request.args.get('latb')
         params['dest_lon'] = request.args.get('lgb')
-        params['timestamp'] = str(basetime)
+        params['timestamp'] = dt.datetime.now()
 
         try:
             if not hardcodedResult:
+
+                delta = dt.datetime.now() - rtdb.initTimestamp
+                basetime = rtdb.graph.baseTime + delta * streamspeed
+                params['timestamp'] = str(basetime)
                 result = ap.search(params)
+                result['info'] = params
             else:
 
                 # Create Hard Coded Result
@@ -74,20 +79,20 @@ def badRequest(message ='No Error message!'):
 
 # Start server
 if __name__ == '__main__':
-    # Flag to use realtime Data
+    # Flag to use Realtime Data
     realtime = False
+    streamspeed= 2
+    # Flag to use hard coded result for frontend testing
     hardcodedResult = True
 
-    # Server needs to keep track of time
+    # @@@Server needs to keep track of time
 
     if realtime:
         # Location for the csv File
         path = "/Users/larshelin/Documents/Studium/Master/Semester 3/Seminar/Data/oneweekfrom20130107.csv"
 
         # Configures, Start and Runs the Realtime Data stream
-        rtdb = RealtimeDB(path, startIndex=50000, rows=20000, speed=2, reset=True)
-        print "Server Basetime: " + str(rtdb.basetime)
+        rtdb = RealtimeDB(path, startIndex=50000, rows=20000, speed=streamspeed, reset=True)
 
-    basetime = dt.datetime.now()
     #app.debug = True
     app.run()

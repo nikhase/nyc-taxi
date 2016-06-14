@@ -1,24 +1,25 @@
 import datetime as dt
 from dateutil import parser
 
-def PriceEstimation(timestamp, travelDistance, travelTime):
+def price_estimation(timestamp, travelDistance, carTravelTime, bikeTravelTime):
     """
     Calculates estimations for the prices for the different possibilities
     :param timestamp: Timestamp for the trip
     :param travelDistance: Estimation of the distance to be travelled in Miles!!
-    :param travelTime: Estimation of the time of travel in Minutes
+    :param carTravelTime: Estimation of the time of travel in Minutes
     :return: Dictionary: Key = Type, Value = Price inf USD
     """
     prices = {}
 
     timestamp = parser.parse(timestamp)
-    UberEstimation(prices, travelTime=travelTime, travelDistance=travelDistance)
-    CabEstimation(prices, timestamp=timestamp, travelTime=travelTime, travelDistance=travelDistance)
+    uber_estimation(prices, travelTime=carTravelTime, travelDistance=travelDistance)
+    cab_estimation(prices, timestamp=timestamp, travelTime=carTravelTime, travelDistance=travelDistance)
+    bike_estimation(prices, travelTime=bikeTravelTime)
 
     return prices
 
 
-def UberEstimation(prices, travelTime, travelDistance):
+def uber_estimation(prices, travelTime, travelDistance):
     """
     Estimation of the prices for different Uber Types
     :param prices: dictionary to added the prices to
@@ -43,7 +44,7 @@ def UberEstimation(prices, travelTime, travelDistance):
 
 
 
-def CabEstimation(prices, timestamp, travelTime, travelDistance):
+def cab_estimation(prices, timestamp, travelTime, travelDistance):
     """
     Calculates the estimated cost of a yellow cab trip
     :param prices: dictionary to added the prices to
@@ -76,7 +77,7 @@ def CabEstimation(prices, timestamp, travelTime, travelDistance):
     prices['yellow_cab'] = str(int(fare))
 
 
-def bikeEstimation():
+def bike_estimation(prices, travelTime):
     '''
 
     :return:
@@ -86,5 +87,20 @@ def bikeEstimation():
     $6.50 for the next additional 30 minutes,
     then $9 for each additional 30 minutes after that.
     '''
+
+    #Shorter than 45 minutes
+    if travelTime <= 45:
+        prices['citibike'] = int(0)
+
+    elif travelTime in range(45, 75):
+        prices['citibike'] = 2.5
+
+    elif travelTime in range(75, 105):
+        prices['citibike'] = 2.5 + 6.5
+    elif travelTime > 105:
+        price = 2.5 + 6.5
+        t = int(travelTime - 105 / 30)
+        price += t*9
+        prices['citibike'] = price
 
 

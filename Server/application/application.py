@@ -1,5 +1,6 @@
 import datasources.taxi_realtime.interface as rt_taxi
 import datasources.taxi_historic.interface as hist_taxi
+import datasources.bike_historic.interface as bike_hist
 import geopy.distance as distance
 import price
 import datetime as dt
@@ -13,17 +14,18 @@ def search(args):
 
     result = {}
     taxi = {}
+    bike = {}
     taxi['realtime'] = rt_taxi.search(args)
     taxi['historic'] = hist_taxi.search(args)
+    bike['historic'] = bike_hist.search(args)
 
     # Need distance and time estiamtion for pricing estimation
     dist = distanceEstimation(args)
-    time = taxi['realtime']
-    time = dt.datetime.strptime(time,"%H:%M:%S.%f").minute
-
-    result['prices'] = price.PriceEstimation(args['timestamp'], dist, time)
+    carTime = dt.datetime.strptime(taxi['realtime'],"%H:%M:%S.%f").minute
+    bikeTime = dt.datetime.strptime(bike['historic'],"%H:%M:%S").minute
+    result['prices'] = price.price_estimation(args['timestamp'], dist, carTime, bikeTime)
     result['taxi'] = taxi
-
+    result['bike'] = bike
 
     return result
 

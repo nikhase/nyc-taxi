@@ -41,15 +41,33 @@ def get_info():
 
                 # Create Hard Coded Result
                 result ={}
+
+                prices = {}
+                prices['uberX'] = "12"
+                prices['uberXL'] = "18"
+                prices['uberSUV'] = "26"
+                prices['uberBlack'] = "22"
+                prices['yellow_cab'] = "14"
+                prices['citibike'] = "2.5"
+
+                walking = {}
+                walking['estiamtion'] = "00:32:10"
+
+                calories = {}
+                calories['walking'] = "234"
+                calories['bike'] = "334"
+
                 taxi = {}
                 taxi['historic'] = "00:08:55"
                 taxi['realtime'] = "00:10:12"
-                taxi['price'] = "12,25USD"
                 bike = {}
                 bike['historic'] = "00:18:55"
-                bike['price'] = "1,00USD"
                 info = {}
                 info = params;
+
+                result['calories'] = calories
+                result['prices'] = prices
+                result['walking'] = walking
                 result['taxi'] = taxi
                 result['bike'] = bike
                 result['info'] = info

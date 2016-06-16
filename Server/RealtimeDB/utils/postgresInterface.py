@@ -2,31 +2,32 @@ from dateutil import parser
 import psycopg2
 
 def addData(event):
-    conn = psycopg2.connect("host='127.0.0.1' dbname='realtime_sql' user='postgres' password='admin'")
-    cur = conn.cursor()
+    if valid(event):
+        conn = psycopg2.connect("host='127.0.0.1' dbname='realtime_sql' user='postgres' password='admin'")
+        cur = conn.cursor()
 
-    # Time
-    date = event['pickup_datetime']
-    #t = date.strftime("%Y-%m-%dT%H:%M:%S")
-
-
-    # Start Location
-    lata = event['pickup_latitude']
-    longa = event['pickup_longitude']
-
-    # End Location
-    latb = event['dropoff_latitude']
-    longb = event['dropoff_longitude']
+        # Time
+        date = event['pickup_datetime']
+        #t = date.strftime("%Y-%m-%dT%H:%M:%S")
 
 
-    #Duration
-    date1 = parser.parse(event['dropoff_datetime'])
-    date2 = parser.parse(event['pickup_datetime'])
-    dur = date1 - date2
-    cur.execute("INSERT INTO public.events VALUES (TIMESTAMP \'" + str(date) + "\', " + str(lata) + ", " + str(longa) + ", " + str(latb) + ", " + str(longb) + ", " + str(dur.seconds) + ");" )
+        # Start Location
+        lata = event['pickup_latitude']
+        longa = event['pickup_longitude']
 
-    conn.commit()
-    conn.close()
+        # End Location
+        latb = event['dropoff_latitude']
+        longb = event['dropoff_longitude']
+
+
+        #Duration
+        date1 = parser.parse(event['dropoff_datetime'])
+        date2 = parser.parse(event['pickup_datetime'])
+        dur = date1 - date2
+        cur.execute("INSERT INTO public.events VALUES (TIMESTAMP \'" + str(date) + "\', " + str(lata) + ", " + str(longa) + ", " + str(latb) + ", " + str(longb) + ", " + str(dur.seconds) + ");" )
+
+        conn.commit()
+        conn.close()
 
 def removeDate(timestamp):
     conn = psycopg2.connect("host='127.0.0.1' dbname='realtime_sql' user='postgres' password='admin'")
@@ -40,3 +41,6 @@ def removeDate(timestamp):
 
     conn.commit()
     conn.close()
+
+def valid(event):
+    return True

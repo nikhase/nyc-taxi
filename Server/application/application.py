@@ -1,8 +1,10 @@
 import datasources.taxi_realtime.interface as rt_taxi
 import datasources.taxi_historic.interface as hist_taxi
 import datasources.bike_historic.interface as bike_hist
+import datasources.miscellaneous.walking as walking
 import geopy.distance as distance
 import price
+import calories
 import datetime as dt
 
 def search(args):
@@ -15,17 +17,38 @@ def search(args):
     result = {}
     taxi = {}
     bike = {}
+    walk = {}
     taxi['realtime'] = rt_taxi.search(args)
     taxi['historic'] = hist_taxi.search(args)
     bike['historic'] = bike_hist.search(args)
+    walk['estimation'] = walking.search(args)
 
     # Need distance and time estiamtion for pricing estimation
     dist = distanceEstimation(args)
-    carTime = dt.datetime.strptime(taxi['realtime'],"%H:%M:%S.%f").minute
+
+
+
+    if taxi['realtime'] == "0:00:00":
+        carEstimation = taxi['historic']
+    else:
+        carEstimation = taxi['realtime']
+
+    # Travel Times needed for price calculation
+    carTime = dt.datetime.strptime(carEstimation,"%H:%M:%S").minute
     bikeTime = dt.datetime.strptime(bike['historic'],"%H:%M:%S").minute
-    result['prices'] = price.price_estimation(args['timestamp'], dist, carTime, bikeTime)
+
+    # Get the calories
+    cals = calories.calories(dist, bikeTime)
+    result['calories'] = cals
     result['taxi'] = taxi
     result['bike'] = bike
+    result['walking'] = walk
+    result['estimated_distance'] = ("%.2f" % dist)
+
+
+    # Get the prices
+    result['prices'] = price.price_estimation(args['timestamp'], dist, carTime, bikeTime)
+
 
     return result
 
@@ -62,4 +85,4 @@ Coordinates['dest_lon'] = -73.879504
 Coordinates['timestamp'] = str(dt.datetime.now())
 
 results = search(Coordinates)
-'''
+print results'''

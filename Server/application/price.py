@@ -67,6 +67,11 @@ def cab_estimation(prices, timestamp, travelTime, travelDistance):
 
     # Slow Traffic Exception
     travelTimeInH = float(travelTime /60.0)
+
+    if travelTimeInH == 0:
+        prices['yellow_cab'] = str(int(0))
+        return
+
     avgSpeed = float( travelDistance / travelTimeInH)  #mph
     if avgSpeed <= 6: # Slower than 6 mp/h
         fare = baseFare + travelTime * 0.5

@@ -33,6 +33,12 @@
             float: left;
             margin: 20px;
         }
+        #icons {
+            height: 60px;
+            width: 60px;
+            margin: 10px;
+        }
+
     </style>
 </head>
 <body>
@@ -52,6 +58,29 @@
             <input type="text" onFocus="geolocate()" name="end_location" id="autocomplete2" placeholder="Set your end location" value="" data-mini="true" maxlength="80" data-wrapper-class="ui-custom" />
 
             <a class="ui-btn" id="btnGetGeo">Search</a> <!-- href="#secondpage" -->
+        </div>
+
+
+        <div>
+            <p><strong>Date: 2013-02-21 06:35:45</strong></p>
+            <ul data-role="listview" data-inset="true">
+                <li><a href="#">
+                    <img id="icons" src="https://cdn4.iconfinder.com/data/icons/aiga-symbol-signs/388/aiga_taxi-512.png">
+                    <h2>Taxi</h2>
+                    <p>Estimation: 10:45 min</p></a>
+                </li>
+                 <li><a href="#">
+                    <img id="icons" src="https://d30y9cdsu7xlg0.cloudfront.net/png/54-200.png">
+                    <h2>Bike</h2>
+                    <p>Estimation: 10:45 min</p></a>
+                </li>
+                </li>
+                 <li><a href="#">
+                    <img id="icons" src="https://d30y9cdsu7xlg0.cloudfront.net/png/19727-200.png">
+                    <h2>Walking</h2>
+                    <p>Estimation: 10:45 min</p></a>
+                </li>
+            </ul>
         </div>
 
         <div id="taxi">

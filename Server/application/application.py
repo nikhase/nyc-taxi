@@ -67,7 +67,8 @@ def distanceEstimation(args):
 
     # Usage of circuity concepts to derive roadmap distance
     # Source: http://www.sciencedirect.com/science/article/pii/S0965856401000441
-    atob *= 1.2
+    # Actual Value based on research using ~1950 trips an compare to distance from google
+    atob *= 1.428082
     return atob
 
 

@@ -8,7 +8,7 @@ def search(args):
     :return: Time as stringified timedelta hh:mm:ss
     '''
     # Parameters
-    circuityFactor = 1.2
+    circuityFactor = 1.428082
     avgWalkingSpeed = 3 #mph
 
     # Start and Endpoints
@@ -16,7 +16,7 @@ def search(args):
     dest = args['dest_lat'], args['dest_lon']
 
     # Estimate distance based on circuity factor
-    dist = distance.vincenty(start, dest).miles * 1.2
+    dist = distance.vincenty(start, dest).miles * circuityFactor
 
     # Calculate Time based on average walking speed
     walkingTimeMin = (dist / avgWalkingSpeed ) * 60

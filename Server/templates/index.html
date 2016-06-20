@@ -64,22 +64,179 @@
         <div>
             <p><strong>Date: 2013-02-21 06:35:45</strong></p>
             <ul data-role="listview" data-inset="true">
-                <li><a href="#">
-                    <img id="icons" src="https://cdn4.iconfinder.com/data/icons/aiga-symbol-signs/388/aiga_taxi-512.png">
-                    <h2>Taxi</h2>
-                    <p>Estimation: 10:45 min</p></a>
+                <li data-role="list-divider" data-inset="false">
+                    <table>
+                        <tr>
+                        <td rowspan="2">
+                            <img id="icons" src="{{url_for('static', filename='taxi.png') }}" />
+                        </td>
+                        <td>
+                            <h2>Car</h2>
+                        </td>
+                        </tr>
+                        <tr>
+                        <td>
+                            <p>Estimation</p>
+                        </td>
+                        <td>
+                            <p>00:39</p>
+                        </td>
+                        </tr>
+                    </table>
+                        </li>
                 </li>
-                 <li><a href="#">
-                    <img id="icons" src="https://d30y9cdsu7xlg0.cloudfront.net/png/54-200.png">
-                    <h2>Bike</h2>
-                    <p>Estimation: 10:45 min</p></a>
+                <li data-role="collapsible">
+                    <h3 font-size="-2">Prices:</h3>
+                    <table>
+                        <tr>
+                            <td width="40%">
+                                Yellow Cab:
+                            </td>
+                            <td id="uberx_price" width="40%"> $15</td>
+                        </tr>
+                        <tr>
+                            <td width="40%">
+                                UberX:
+                            </td>
+                            <td id="uberx_price" width="40%"> $15</td>
+                        </tr>
+                        <tr>
+                            <td width="40%">
+                                UberXL:
+                            </td>
+                            <td id="uberx_price" width="40%"> $15</td>
+                        </tr>
+                        <tr>
+                            <td width="40%">
+                                UberSUV:
+                            </td>
+                            <td id="uberx_price" width="40%"> $15</td>
+                        </tr>
+                        <tr>
+                            <td width="40%">
+                                UberBlack:
+                            </td>
+                            <td id="uberx_price" width="40%"> $15</td>
+                        </tr>
+                    </table>
                 </li>
+
+                <!-- Next Item -->
+                 <li data-role="list-divider">
+                    <table>
+                        <tr>
+                        <td rowspan="2">
+                            <img id="icons" src="{{url_for('static', filename='walk.png') }}"  />
+                        </td>
+                        <td>
+                            <h2>Walk</h2>
+                        </td>
+                        </tr>
+                        <tr>
+                        <td>
+                            <p>Estimation</p>
+                        </td>
+                        <td>
+                            <p>00:39</p>
+                        </td>
+                        </tr>
+                    </table>
+                        </li>
                 </li>
-                 <li><a href="#">
-                    <img id="icons" src="https://d30y9cdsu7xlg0.cloudfront.net/png/19727-200.png">
-                    <h2>Walking</h2>
-                    <p>Estimation: 10:45 min</p></a>
+                <li data-role="collapsible">
+                    <h3 font-size="-2">Prices:</h3>
+                    <table>
+                        <tr>
+                            <td width="40%">
+                                Yellow Cab:
+                            </td>
+                            <td id="uberx_price" width="40%"> $15</td>
+                        </tr>
+                        <tr>
+                            <td width="40%">
+                                UberX:
+                            </td>
+                            <td id="uberx_price" width="40%"> $15</td>
+                        </tr>
+                        <tr>
+                            <td width="40%">
+                                UberXL:
+                            </td>
+                            <td id="uberx_price" width="40%"> $15</td>
+                        </tr>
+                        <tr>
+                            <td width="40%">
+                                UberSUV:
+                            </td>
+                            <td id="uberx_price" width="40%"> $15</td>
+                        </tr>
+                        <tr>
+                            <td width="40%">
+                                UberBlack:
+                            </td>
+                            <td id="uberx_price" width="40%"> $15</td>
+                        </tr>
+                    </table>
                 </li>
+
+                <!-- Next Item -->
+                 <li data-role="list-divider">
+                    <table>
+                        <tr>
+                        <td rowspan="2">
+                            <img id="icons" src="{{url_for('static', filename='bike.png') }}"  />
+                        </td>
+                        <td>
+                            <h2>Bike</h2>
+                        </td>
+                        </tr>
+                        <tr>
+                        <td>
+                            <p>Estimation</p>
+                        </td>
+                        <td>
+                            <p>00:39</p>
+                        </td>
+                        </tr>
+                    </table>
+                        </li>
+                </li>
+                <li data-role="collapsible">
+                    <h3 font-size="-2">Prices:</h3>
+                    <table>
+                        <tr>
+                            <td width="40%">
+                                Yellow Cab:
+                            </td>
+                            <td id="uberx_price" width="40%"> $15</td>
+                        </tr>
+                        <tr>
+                            <td width="40%">
+                                UberX:
+                            </td>
+                            <td id="uberx_price" width="40%"> $15</td>
+                        </tr>
+                        <tr>
+                            <td width="40%">
+                                UberXL:
+                            </td>
+                            <td id="uberx_price" width="40%"> $15</td>
+                        </tr>
+                        <tr>
+                            <td width="40%">
+                                UberSUV:
+                            </td>
+                            <td id="uberx_price" width="40%"> $15</td>
+                        </tr>
+                        <tr>
+                            <td width="40%">
+                                UberBlack:
+                            </td>
+                            <td id="uberx_price" width="40%"> $15</td>
+                        </tr>
+                    </table>
+                </li>
+
             </ul>
         </div>
 

@@ -23,6 +23,7 @@ def search(args):
         tripTimeSecs = data['routes'][0]['legs'][0]['duration']['value']
         tripTime = dt.timedelta(seconds=tripTimeSecs)
     except Exception as e:
-        raise e
+        time = dt.timedelta(minutes=0, seconds=0, hours=0)
+        return str(time)
 
     return str(tripTime)

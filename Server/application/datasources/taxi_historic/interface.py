@@ -25,6 +25,6 @@ def search(args):
 
     res = treelib.getEstimatedTime(val)
     result = {}
-    result= str(dt.timedelta(minutes=res[0]))
+    result= str(dt.timedelta(minutes=int(res[0])))
     return result
 

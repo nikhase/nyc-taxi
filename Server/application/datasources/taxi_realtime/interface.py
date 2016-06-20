@@ -20,7 +20,8 @@ def search(args):
     #print str(results)
 
     if len(results) == 0:
-        return "no result found"
+        result = dt.timedelta(hours=0, minutes=0, seconds=0, microseconds=0)
+        return str(result)
 
     for res in results:
         # Get start end and point as tuples
@@ -47,7 +48,7 @@ def search(args):
 
     # Add Information
     result = {}
-    result['estimatedDuration'] = str(dt.timedelta(seconds=durSum))
+    result['estimatedDuration'] = str(dt.timedelta(seconds=int(durSum)))
     result['numberOfResults'] = str(len(results))
 
     return result['estimatedDuration']

@@ -4,12 +4,20 @@ console.log("loaded")
     $('#btnGetGeo').click(function(){
         var requestStart = $('#autocomplete').val() + "&key=AIzaSyA_MF2DqEyP732LOONDdJ0du_oaxii_8JE";  //Val Function to retrieve Value
         var requestEnd = $('#autocomplete2').val() + "&key=AIzaSyA_MF2DqEyP732LOONDdJ0du_oaxii_8JE";
-        var resultStart = $('#resultDivStart');
-        var resultEnd = $('#resultDivEnd');
-        var bikeoutput = $('#bikeoutput');
-        var taxioutput = $('#taxioutput');
-        var taxipng = $('#taxipng');
-        var bikepng = $('#bikepng');
+
+        var cartime = $('#cartime');
+        var biketime = $('#biketime');
+        var walkingtime = $('#walkingtime');
+        var cab_price = $('#cab_price');
+        var uberx_price = $('#uberx_price');
+        var uberxl_price = $('#uberxl_price');
+        var ubersuv_price = $('#ubersuv_price');
+        var uberblack_price = $('#uberblack_price');
+        var bike_price = $('#bike_price');
+        var walking_calories = $('#walking_calories');
+        var bike_calories = $('#bike_calories');
+        var timestamp = $('#timestamp');
+        var lighttaxi = $('#lighttaxi');
 
         var lata, lga, latb, lgb, geo;
         
@@ -44,22 +52,32 @@ console.log("loaded")
                             url: "/search?" + geo,
                             method: 'get',
                             success: function (data) {
-                                taxipng.html(
-                                   "<img src='https://cdn4.iconfinder.com/data/icons/aiga-symbol-signs/388/aiga_taxi-512.png' height='80px' width='80px'>"
-                                );
-                                bikepng.html(
-                                   "<img src='https://d30y9cdsu7xlg0.cloudfront.net/png/54-200.png' height='80px' width='80px'>"
-                                );
-                                taxioutput.html(
-                                    "Historic Time: " + data.taxi.historic + "<br>" +
-                                    "Realtime: " + data.taxi.realtime + "<br>" +
-                                    "Cost: " + data.taxi.price
-                                );
-                                bikeoutput.html(
-                                    "Historic Time: " + data.bike.historic + "<br>" +
-                                    "Cost: " + data.bike.price + "<br><br>"
-                                );
-                              },
+                                cartime.html(data.taxi.historic);
+                                cab_price.html("$ " + data.prices.yellow_cab);
+                                uberblack_price.html("$ " + data.prices.uberBlack);
+                                ubersuv_price.html("$ " + data.prices.uberSUV);
+                                uberx_price.html("$ " + data.prices.uberX);
+                                uberxl_price.html("$ " + data.prices.uberXL);
+
+
+                                biketime.html(data.bike.historic);
+                                bike_calories.html(data.calories.bike);
+                                bike_price.html("$ " + data.prices.citibike);
+
+                                walkingtime.html(data.walking.estiamtion);
+                                walking_calories.html(data.calories.walking);
+
+                                timestamp.html(data.info.timestamp);
+
+                                 if (data.taxi.realtime <= data.taxi.historic) {
+                                          lighttaxi.html("<img style='height: 60px; width: 50px; margin: 10px' align='right' src='{{url_for('static', filename='light-green.png') }}' />");
+                                 }
+                                 if (data.taxi.realtime > data.taxi.historic) {
+                                          lighttaxi.html("<img style='height: 60px; width: 50px; margin: 10px' align='right' src='{{url_for('static', filename='light-orange.png') }}' />");
+                                 }
+
+
+                            },
                             error: function(){
                                 alert("Fehler beim Lesen der Serverantwort")
                             }
@@ -127,7 +145,7 @@ function fillInAddress(autocomplete, unique) {
     }
   }
 }
-google.maps.event.addDomListener(window, "load", initAutocomplete);
+//google.maps.event.addDomListener(window, "load", initAutocomplete);
 
 function geolocate() {
   if (navigator.geolocation) {

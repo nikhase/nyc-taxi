@@ -2,89 +2,124 @@ $(document).ready(function(){
 console.log("loaded")
     
     $('#btnGetGeo').click(function(){
-        var requestStart = $('#autocomplete').val() + "&key=AIzaSyA_MF2DqEyP732LOONDdJ0du_oaxii_8JE";  //Val Function to retrieve Value
-        var requestEnd = $('#autocomplete2').val() + "&key=AIzaSyA_MF2DqEyP732LOONDdJ0du_oaxii_8JE";
+        // Empty Error Textfield
+        $('#errorBox').hide();
+        $('#errortext').text("");
 
-        var cartime = $('#cartime');
-        var biketime = $('#biketime');
-        var walkingtime = $('#walkingtime');
-        var cab_price = $('#cab_price');
-        var uberx_price = $('#uberx_price');
-        var uberxl_price = $('#uberxl_price');
-        var ubersuv_price = $('#ubersuv_price');
-        var uberblack_price = $('#uberblack_price');
-        var bike_price = $('#bike_price');
-        var walking_calories = $('#walking_calories');
-        var bike_calories = $('#bike_calories');
-        var timestamp = $('#timestamp');
-        var lighttaxi = $('#lighttaxi');
+        if (($('#autocomplete').val() == "") || $('#autocomplete2').val() =="" )
+        {
+            // Set Error
+            $('#errorBox').show();
+            $('#errortext').text("Ups, you did not enter the correct info!");
 
-        var lata, lga, latb, lgb, geo;
-        
+        }
+        else {
 
-        // https://maps.googleapis.com/maps/api/geocode/json ?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA&key=AIzaSyA_MF2DqEyP732LOONDdJ0du_oaxii_8JE
-        $.ajax({
-            url: "https://maps.googleapis.com/maps/api/geocode/json",
-            method: 'get',                      //request type
-            data: {address: requestStart},      //property name address, data to be stend to the server: requestStart
-            dataType: 'json',                   //data we are expecting back from the server
-            success: function(data) {           //callback funktion
-              //  resultStart.html("Startpoint: </br>Latitude " + data.results[0].geometry.location.lat + "</br>" + 'Longitude ' + data.results[0].geometry.location.lng);
-                lata = data.results[0].geometry.location.lat;
-                lga = data.results[0].geometry.location.lng;
+
+            var requestStart = $('#autocomplete').val() + "&key=AIzaSyA_MF2DqEyP732LOONDdJ0du_oaxii_8JE";  //Val Function to retrieve Value
+
+            // Problem when the autocomplete reuslt is too exact
+            // Only take Name/Address , City
+            requestStartParts = requestStart.split(',');
+            if (requestStartParts.length >= 3) {
+                requestStart = requestStartParts[0] + "," + requestStartParts[1];
             }
-        });
+            console.log(requestStart)
+            var requestEnd = $('#autocomplete2').val() + "&key=AIzaSyA_MF2DqEyP732LOONDdJ0du_oaxii_8JE";
+            requestEndParts = requestEnd.split(',');
+            if (requestEndParts.length >= 3) {
+                requestEnd = requestEndParts[0] + "," + requestEndParts[1];
+            }
+            console.log(requestEnd)
+            var cartime = $('#cartime');
+            var biketime = $('#biketime');
+            var walkingtime = $('#walkingtime');
+            var cab_price = $('#cab_price');
+            var uberx_price = $('#uberx_price');
+            var uberxl_price = $('#uberxl_price');
+            var ubersuv_price = $('#ubersuv_price');
+            var uberblack_price = $('#uberblack_price');
+            var bike_price = $('#bike_price');
+            var walking_calories = $('#walking_calories');
+            var bike_calories = $('#bike_calories');
+            var timestamp = $('#timestamp');
+            var lighttaxi = $('#lighttaxi');
 
-        $.ajax({
-            url: "https://maps.googleapis.com/maps/api/geocode/json",
-            method: 'get',
-            data: {address: requestEnd},
-            dataType: 'json',
-            success: function(data) {
-             //   resultEnd.html("Endpoint: </br>Latitude " + data.results[0].geometry.location.lat + "</br>" + 'Longitude ' + data.results[0].geometry.location.lng);
-                latb = data.results[0].geometry.location.lat;
-                lgb = data.results[0].geometry.location.lng;
-                geo = "lata=" + lata +"&lga=" + lga + "&latb=" + latb + "&lgb=" + lgb;
-                //link.html("http://localhost:5000/search?lata=" + lata +"&lga=" + lga + "&latb=" + latb + "&lgb=" + lgb);
-                // http://127.0.0.1:5000/search?lta=40.770475&lga=-73.879504&ltb=40.751573&lgb=-73.991857
-
-                        $.ajax({
-                            url: "/search?" + geo,
-                            method: 'get',
-                            success: function (data) {
-                                cartime.html(data.taxi.historic);
-                                cab_price.html("$ " + data.prices.yellow_cab);
-                                uberblack_price.html("$ " + data.prices.uberBlack);
-                                ubersuv_price.html("$ " + data.prices.uberSUV);
-                                uberx_price.html("$ " + data.prices.uberX);
-                                uberxl_price.html("$ " + data.prices.uberXL);
+            var lata, lga, latb, lgb, geo;
 
 
-                                biketime.html(data.bike.historic);
-                                bike_calories.html(data.calories.bike);
-                                bike_price.html("$ " + data.prices.citibike);
+            // https://maps.googleapis.com/maps/api/geocode/json ?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA&key=AIzaSyA_MF2DqEyP732LOONDdJ0du_oaxii_8JE
+            $.ajax({
+                url: "https://maps.googleapis.com/maps/api/geocode/json",
+                method: 'get',                      //request type
+                data: {address: requestStart},      //property name address, data to be stend to the server: requestStart
+                dataType: 'json',                   //data we are expecting back from the server
+                success: function (data) {           //callback funktion
+                    //  resultStart.html("Startpoint: </br>Latitude " + data.results[0].geometry.location.lat + "</br>" + 'Longitude ' + data.results[0].geometry.location.lng);
+                    lata = data.results[0].geometry.location.lat;
+                    lga = data.results[0].geometry.location.lng;
+                }
+            });
 
-                                walkingtime.html(data.walking.estiamtion);
-                                walking_calories.html(data.calories.walking);
+            $.ajax({
+                url: "https://maps.googleapis.com/maps/api/geocode/json",
+                method: 'get',
+                data: {address: requestEnd},
+                dataType: 'json',
+                success: function (data) {
+                    //   resultEnd.html("Endpoint: </br>Latitude " + data.results[0].geometry.location.lat + "</br>" + 'Longitude ' + data.results[0].geometry.location.lng);
+                    latb = data.results[0].geometry.location.lat;
+                    lgb = data.results[0].geometry.location.lng;
+                    geo = "lata=" + lata + "&lga=" + lga + "&latb=" + latb + "&lgb=" + lgb;
+                    //link.html("http://localhost:5000/search?lata=" + lata +"&lga=" + lga + "&latb=" + latb + "&lgb=" + lgb);
+                    // http://127.0.0.1:5000/search?lta=40.770475&lga=-73.879504&ltb=40.751573&lgb=-73.991857
 
-                                timestamp.html(data.info.timestamp);
+                    $.ajax({
+                        url: "/search?" + geo,
+                        method: 'get',
+                        success: function (data) {
+                            cartime.html(data.taxi.historic);
+                            cab_price.html("$ " + data.prices.yellow_cab);
+                            uberblack_price.html("$ " + data.prices.uberBlack);
+                            ubersuv_price.html("$ " + data.prices.uberSUV);
+                            uberx_price.html("$ " + data.prices.uberX);
+                            uberxl_price.html("$ " + data.prices.uberXL);
 
-                                 if (data.taxi.realtime <= data.taxi.historic) {
-                                          lighttaxi.html("<img style='height: 60px; width: 50px; margin: 10px' align='right' src='{{url_for('static', filename='light-green.png') }}' />");
-                                 }
-                                 if (data.taxi.realtime > data.taxi.historic) {
-                                          lighttaxi.html("<img style='height: 60px; width: 50px; margin: 10px' align='right' src='{{url_for('static', filename='light-orange.png') }}' />");
-                                 }
 
+                            biketime.html(data.bike.historic);
+                            bike_calories.html(data.calories.bike);
+                            bike_price.html("$ " + data.prices.citibike);
 
-                            },
-                            error: function(){
-                                alert("Fehler beim Lesen der Serverantwort")
+                            walkingtime.html(data.walking.estiamtion);
+                            walking_calories.html(data.calories.walking);
+
+                            timestamp.html(data.info.timestamp);
+
+                            var threshold = 5;
+
+                            if (data.taxi.realtime <= data.taxi.historic) {
+                                $("#green").show();
                             }
-                            })
-            }
-        });
+                            if (data.taxi.realtime <= data.taxi.historic + threshold) {
+                                $("#orange").show();
+                            }
+                            if (data.taxi.realtime > data.taxi.historic + threshold) {
+                                $("#red").show();
+                            }
 
+
+                            //Go to second page
+                            window.location = "#secondpage";
+
+                        },
+                        error: function () {
+                            $('#errorBox').show();
+                            $('#errortext').text("Sorry, something went wrong handling your request. Please try again!");
+                        }
+                    })
+                }
+            });
+        }
     });
 })
 

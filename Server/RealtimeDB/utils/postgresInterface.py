@@ -2,7 +2,7 @@ from dateutil import parser
 import psycopg2
 
 def addData(event):
-    if valid(event):
+    if consistent(event):
         conn = psycopg2.connect("host='127.0.0.1' dbname='realtime_sql' user='postgres' password='admin'")
         cur = conn.cursor()
 
@@ -42,5 +42,21 @@ def removeDate(timestamp):
     conn.commit()
     conn.close()
 
-def valid(event):
+def consistent(event):
+
+    # Start Location
+    if (event['pickup_latitude'] == 0 or event['pickup_longitude'] == 0):
+        return False
+
+    # End Location
+    if (event['dropoff_latitude'] == 0 or event['dropoff_latitude'] == 0):
+        return False
+
+    # Duration
+    date1 = parser.parse(event['dropoff_datetime'])
+    date2 = parser.parse(event['pickup_datetime'])
+
+    if date1 <= date2:
+        return False
+
     return True

@@ -15,6 +15,103 @@
         .ui-header .ui-btn-left {
             top: 0.6em;
         }
+        .ui-page .ui-header {
+            background: #660000 !important;
+            margin: 0 0 0 0;
+            text-shadow:0 0 0 !important;
+            color: #ffe066;
+        }
+
+                .ui-page .ui-footer {
+            background: #660000 !important;
+            margin: 0 0 0 0;
+            text-shadow:0 0 0 !important;
+            color: #ffe066;
+        }
+
+        .ui-page {
+            background:#fff5cc;
+        background-image:url(static/manhattan.png);
+            background-size: 90% auto;
+            background-repeat: no-repeat;
+              background-position: 50% 80%;
+        /*background-size:cover;*/
+        }
+
+         /*Custom Font Style */
+        .normalAppText{
+            text-shadow:0 0 0 !important;
+            color: #660000;
+        }
+
+        /*Custom Buttons */
+        .appButton{
+            color: #660000 !important;
+            text-shadow:0 0 0 !important;
+            background: #ffe680 !important;
+            border-color: #660000 !important;
+        }
+
+        /*Info Box that shows Errors */
+        .infoTextDiv {
+            border-style: solid;
+            border-width: 5px;
+            border-color: black;
+            margin-left: 10%;
+            width:80%;
+            height: 20%;
+            text-shadow: 0 0 0 !important;
+            color: #ffe066;
+            background: #660000;
+            display: none;
+        }
+
+         /*Custom Buttons */
+        .appLiDivider {
+            text-decoration:  none;
+            background: #cca300 !important;
+            text-shadow:0 0 0 !important;
+            border-color: black;
+            border: none;
+            color: #660000;
+
+        }
+
+        .appList{
+            background: #ffe680;
+            border-style: solid;
+            border-width: 5px;
+            border-color: black;
+            text-shadow:0 0 0 !important;
+        }
+
+        .appListSubItem {
+            color: #660000 !important;
+            text-shadow:0 0 0 !important;
+            background: #ffe680 !important;
+            border: none;
+            text-shadow:0 0 0 !important;
+        }
+        .ui-page-theme-a .ui-btn {
+             color: black !important;
+            text-shadow:0 0 0 !important;
+            background: #ffe066!important;
+            border: none;
+            text-shadow:0 0 0 !important;
+        }
+
+        .ui-page-theme-a .ui-body-inherit {
+            color: black !important;
+            text-shadow:0 0 0 !important;
+            background: transparent;
+            border: none;
+            text-shadow:0 0 0 !important;
+        }
+        /*
+        .ui-page-theme-a .ui-bar-inherit {
+            border: none;
+        }*/
+}
     </style>
 </head>
 
@@ -26,48 +123,56 @@
 	</div>
 
 	<div date-role="main" class="ui-content">
-
-        <div>
-            <label for="autocomplete"><b>Start Location</b></label>
+        <div align="center">
+            <h1 class="normalAppText">Plan your Trip</h1>
+            <p class="normalAppText">Enter your start location and your destination:</p>
+        </div>
+        <div >
+            <label for="autocomplete"><b class="normalAppText">Start Location</b></label>
             <input type="text" onFocus="geolocate()" name="location" id="autocomplete" placeholder="Set your start location" value="" data-mini="true" maxlength="80" data-wrapper-class="ui-custom" />
 
-            <label for="autocomplete2"><b>End Location</b></label>
+            <label for="autocomplete2"><b class="normalAppText">End Location</b></label>
             <input type="text" onFocus="geolocate()" name="end_location" id="autocomplete2" placeholder="Set your end location" value="" data-mini="true" maxlength="80" data-wrapper-class="ui-custom" />
 
-            <a class="ui-btn" id="btnGetGeo" href="#secondpage">Search</a>
+            <a class="appButton" data-role="button" id="btnGetGeo" >Search</a>
         </div>
-
+        <div id="errorBox" align="center" class="infoTextDiv">
+            <p id="errortext"></p>
+        </div>
     </div>
 
 	<div data-role="footer" data-position="fixed">
-		<h4>Page Footer</h4>
+		<h4>Realtime Traffic Engine</h4>
 	</div>
 </div>
 
 <!-- Second Page Page-->
 <div data-role="page" id="secondpage">
 	<div data-role="header">
+        <a href="#startpage"class="appButton" data-role="button" data-icon="arrow-l">Back</a>
 		<p align="middle">Your Trip Data<p>
-		<a href="#startpage" class="ui-btn ui-btn-icon-left ui-icon-back ui-btn-left">Back</a>
+
 	</div>
 
 	<div date-role="main" class="ui-content">
 
         <div>
-            <ul data-role="listview" data-inset="true">
+            <ul data-role="listview" data-inset="true" class="appList" >
                 <!-- Item 1: Car -->
-                <li data-role="list-divider" data-inset="false">
+                <li data-role="list-divider" data-inset="false" class="appLiDivider">
                     <table>
                         <tr>
                             <td rowspan="2">
-                                <img id="icons" src="{{url_for('static', filename='taxi.png') }}" />
+                                <img id="icons" style="height: 50px; width:auto;" src="{{url_for('static', filename='taxi.png') }}" />
                             </td>
                             <td>
                                 <h2 style="font-size: 16px">Car</h2>
                             </td>
-                            <td>
-                            </td>
-                            <td rowspan="2" width="200px" id="lighttaxi">
+                            <td width="30%"></td>
+                            <td rowspan="2" align="right">
+                                <img id="green" style="height: 50px; width:auto; display: none;" src="{{url_for('static', filename='light-green.png') }}" />
+                                <img id="orange" style="height: 50px; width:auto; display: none;" src="{{url_for('static', filename='light-orange.png') }}" />
+                                <img id="red" style="height: 50px; width:auto; display: none;" src="{{url_for('static', filename='light-red.png') }}" />
                             </td>
                         </tr>
                         <tr>
@@ -81,9 +186,10 @@
 
                     </table>
                 </li>
-                <li data-role="collapsible">
+                <li data-role="collapsible" class="appListSubItem">
+
                     <h3 font-size="-2">Prices:</h3>
-                    <table>
+                    <table >
                         <tr>
                             <td width="100px">
                                 Yellow Cab:
@@ -118,11 +224,11 @@
                 </li>
 
                 <!-- Item 2: Bike -->
-                 <li data-role="list-divider">
+                 <li data-role="list-divider" class="appLiDivider">
                     <table>
                         <tr>
                             <td rowspan="2">
-                                <img id="icons" src="{{url_for('static', filename='bike.png') }}" />
+                                <img id="icons" style="height: 50px; width:auto;" src="{{url_for('static', filename='bike.png') }}" />
                             </td>
                             <td>
                                 <h2 style="font-size: 16px">Bike</h2>
@@ -139,7 +245,7 @@
                     </table>
                         </li>
                 </li>
-                <li data-role="collapsible">
+                <li data-role="collapsible" class="appListSubItem">
                     <h3 font-size="-2">Info:</h3>
                     <table>
                         <tr>
@@ -159,11 +265,11 @@
                 </li>
 
                 <!-- Item 3: Walking -->
-                 <li data-role="list-divider">
+                 <li data-role="list-divider" class="appLiDivider">
                     <table>
                         <tr>
                             <td rowspan="2">
-                                <img id="icons" src="{{url_for('static', filename='walk.png') }}" />
+                                <img id="icons" style="height: 50px; width:auto;" src="{{url_for('static', filename='walk.png') }}" />
                             </td>
                             <td>
                                 <h2 style="font-size: 16px">Walking</h2>
@@ -180,7 +286,7 @@
                     </table>
                         </li>
                 </li>
-                <li data-role="collapsible">
+                <li data-role="collapsible" class="appListSubItem">
                     <h3 font-size="-2">Info:</h3>
                     <table>
                         <tr>

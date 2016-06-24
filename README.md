@@ -44,6 +44,10 @@ We face the situation, that we have distinct start- and endpoints and not arbitr
 Todos:
 ======
 
+-	Zweite Maiwoche ausschneiden (Taxi und Bike)
+-	avg_velo ist target bei bike-Daten
+-	avg_velo bereinigen: zu kleine und zu große raus
+-	wieso sagen wir bei Taxi Zeit statt avg_velo voraus? Aufgrund des Skalierungsfehlers und der leichteren Interpretierbarkeit: lieber "5 min länger gebraucht" statt 10 mp/h vs 12 mp/h
 -	Visualize Trees
--	Take into account the distance to the next bike station
+-	Take into account the distance to the next bike station -> not needed, we only have a look at average velocity
 -	Make a better model for the bikes

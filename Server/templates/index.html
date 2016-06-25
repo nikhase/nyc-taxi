@@ -348,6 +348,7 @@
             </ul>
         </div>
         <div>
+            <a data-role="button" onclick="addMap()" >View Map</a>
             <div id="map"></div>
         </div>
     </div>
@@ -383,6 +384,7 @@
     <!--script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCrUPmutpt3muompqACV5m6f8rYcDu-lLE&signed_in=true"></script-->
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBIrSNzkA1opCqivwJYXXRwEJkwKPKKCjE&libraries=places&callback=initAutocomplete" async defer></script>
   	<script type=text/javascript>$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};</script>
+    <script type=text/javascript src="{{url_for('static', filename='properties.js') }}"></script>
   	<script type=text/javascript src="{{url_for('static', filename='script.js') }}"></script>
 
 </body>

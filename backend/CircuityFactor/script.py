@@ -18,15 +18,16 @@ def googleDistance(args):
         return 0
         #response = urllib2.urlopen(url)
         #data = json.load(response)
-        return data['rows'][0]['elements'][0]['distance']['value']
+        #return data['rows'][0]['elements'][0]['distance']['value']
 
     except Exception as e:
         return 0
 
 
 path="/Users/larshelin/Documents/Studium/Master/Semester 3/Seminar/Data/oneweekfrom20130107.csv"
-df = pd.read_csv(path, nrows=2200)sum = 0
-n  = 0
+df = pd.read_csv(path, nrows=11000)
+sum = 0
+n = 0
 
 dict = {}
 dict['start_lat'] = []
@@ -38,7 +39,10 @@ dict['real'] = []
 dict['start_timestamp'] = []
 dict['dest_timestamp'] = []
 
-for i in range(99,2100):
+for i in range(8000,11000):
+    if n % 100 == 0:
+        print i
+
     row = df.ix[i]
     args = {}
     args['start_lat'] = row['pickup_latitude']
@@ -77,7 +81,10 @@ for i in range(99,2100):
     #sum += circuity
     n += 1
 
-with open("test.csv", "wb") as outfile:
+    if n == 2000:
+        break;
+
+with open("8000_10000.csv", "wb") as outfile:
    writer = csv.writer(outfile)
    writer.writerow(dict.keys())
    writer.writerows(zip(*dict.values()))

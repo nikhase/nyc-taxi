@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-df = pd.read_csv('99_2100_distance.csv')
+df = pd.read_csv('8000_10000.csv')
 
 
 
@@ -28,7 +28,7 @@ df = df[df['circuity'] >= 1]
 
 print df['circuity'].describe()
 
-with open("circuity.txt", 'wb') as file:
+with open("circuity4.txt", 'wb') as file:
     file.write(str(df['circuity'].describe()))
 
 

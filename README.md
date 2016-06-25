@@ -41,13 +41,26 @@ In the next step, the times and dates are transformed to *datetime-* and *timede
 
 We face the situation, that we have distinct start- and endpoints and not arbitrary ones like in the taxi-setting. This means, when calculating the estimated time for taking a bike, one needs to take the way to the start station and the way from the end station into account. As a consequence, we meed to make efforts to extract the "real trips" out of the bike data, i.e. the pure time between two stations. We also need to approximate the distance between two stations to get a feeling for the average velocity of a bike. This will be a filter criterion to select the "pure" trips only.
 
-Todos:
-======
+Upper bound for avg_velocity: Maybe the tracking was triggered when the bike was on a transporter and driven to another station.
+
+-	For the tree: depth 17 seems to perform best (tried several configurations). Random forest with 20 trees.
+-	Negative score for a singly decision tree with depth 17!!
+-	Normally, one should determine the gender influence
+-	One can see a serious shift in the prediction! The mean error of avg_velocity deviation is not 0 but 1. That's not good.
+
+	Todos:
+	======
 
 -	Zweite Maiwoche ausschneiden (Taxi und Bike)
+
 -	avg_velo ist target bei bike-Daten
+
 -	avg_velo bereinigen: zu kleine und zu große raus
+
 -	wieso sagen wir bei Taxi Zeit statt avg_velo voraus? Aufgrund des Skalierungsfehlers und der leichteren Interpretierbarkeit: lieber "5 min länger gebraucht" statt 10 mp/h vs 12 mp/h
+
 -	Visualize Trees
+
 -	Take into account the distance to the next bike station -> not needed, we only have a look at average velocity
+
 -	Make a better model for the bikes

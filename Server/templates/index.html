@@ -64,6 +64,8 @@
             color: #ffe066;
             background: #660000;
             display: none;
+            border-radius: 5px;
+            border: 2px solid #660000;
         }
 
          /*Custom Buttons */
@@ -119,6 +121,10 @@
             border-radius: 5px;
             border: 2px solid #660000;
         }
+
+        #map {
+        height: 200px;
+      }
 }
     </style>
 </head>
@@ -179,7 +185,7 @@
                         </tr>
                         <tr>
                             <td>
-                                <p style="font-size: 13px" id="distanceEstimation">2.3 Miles</p>
+                                <p style="font-size: 13px" id="distanceEstimation"></p>
                             </td>
                         </tr>
 
@@ -341,7 +347,9 @@
 
             </ul>
         </div>
-
+        <div>
+            <div id="map"></div>
+        </div>
     </div>
 	<div data-role="footer" data-position="fixed">
 		<h4 id="timestamp"></h4>
@@ -372,8 +380,7 @@
 		<h4>Realtime Traffic Engine</h4>
 	</div>
 </div>
-
-
+    <!--script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCrUPmutpt3muompqACV5m6f8rYcDu-lLE&signed_in=true"></script-->
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBIrSNzkA1opCqivwJYXXRwEJkwKPKKCjE&libraries=places&callback=initAutocomplete" async defer></script>
   	<script type=text/javascript>$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};</script>
   	<script type=text/javascript src="{{url_for('static', filename='script.js') }}"></script>

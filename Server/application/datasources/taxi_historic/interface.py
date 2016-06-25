@@ -15,7 +15,7 @@ def search(args):
     #2013-01-07 07:43:03.013168+00:00
     timestamp = parser.parse(args['timestamp'])
     val = []
-    val.append(numpy.float64(timestamp.day))
+    #val.append(numpy.float64(timestamp.day))
     val.append(numpy.float64(timestamp.weekday()))
     val.append(numpy.float64(timestamp.hour))
     val.append(numpy.float64(args['start_lat']))

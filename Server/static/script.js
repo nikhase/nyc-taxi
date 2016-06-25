@@ -1,6 +1,7 @@
 $(document).ready(function () {
     console.log("loaded")
 
+
     $('#btnGetGeo').click(function () {
         // Empty Error Textfield
         $('#errorBox').hide();
@@ -45,6 +46,7 @@ $(document).ready(function () {
             var bike_calories = $('#bike_calories');
             var timestamp = $('#timestamp');
             var lighttaxi = $('#lighttaxi');
+            var distanceEst = $('#distanceEstimation');
 
             var lata, lga, latb, lgb, geo;
 
@@ -96,26 +98,31 @@ $(document).ready(function () {
                                         walking_calories.html(data.calories.walking);
 
                                         timestamp.html(data.info.timestamp);
+                                        distanceEst.html(data.estimated_distance + " Miles");
+
 
                                         //NEED TO TRANSFORM STRING TO DATETIME
-                                        //DEVIATION IN PERCENT! NOT MINUTES
-                                        var threshold = 5;
-                                        console.log(data.taxi.realtime)
-                                        console.log(data.taxi.historic + 5)
+                                        var histMin = parseInt(data.taxi.historic.split(":")[0] * 60 + data.taxi.historic.split(":")[1]);
+                                        var realMin = parseInt(data.taxi.realtime.split(":")[0] * 60 + data.taxi.realtime.split(":")[1]);
+                                        //console.log(histMin)
+                                        //console.log(realMin + 5)
 
-                                        if (data.taxi.realtime <= data.taxi.historic) {
+                                        if ((realMin <= 1.25 * histMin)) {
                                             $("#green").show();
                                         }
-                                        else if (data.taxi.realtime <= data.taxi.historic + threshold) {
+                                        else if ((realMin <= 1.5 * histMin) && (realMin > 1.25 * histMin)) {
+
                                             $("#orange").show();
                                         }
-                                        else if (data.taxi.realtime > data.taxi.historic + threshold) {
+                                        else {
                                             $("#red").show();
                                         }
 
 
+
                                         //Go to second page
                                         window.location = "#secondpage";
+                                        addMap();
 
                                     },
                                     error: function () {
@@ -146,6 +153,20 @@ var componentForm = {
     country: 'long_name',
     postal_code: 'short_name'
 };
+
+function addMap()
+{
+    console.log("Init Map")
+    //Prepare Map
+    var myLatLng = {lat: 40.773382, lng: -73.982392};
+
+
+    var map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 12,
+        center: myLatLng
+    });
+
+}
 
 function initAutocomplete() {
     // Create the autocomplete object, restricting the search to geographical

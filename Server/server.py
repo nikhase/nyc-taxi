@@ -40,6 +40,8 @@ def get_info():
             else:
 
                 # Create Hard Coded Result
+                # Just for testing purposes
+                # Not entire backend needed to test frontend
                 result ={}
 
                 prices = {}
@@ -71,6 +73,7 @@ def get_info():
                 result['taxi'] = taxi
                 result['bike'] = bike
                 result['info'] = info
+                result['estimated_distance'] = "4.5"
                 print result
 
         except Exception as e:

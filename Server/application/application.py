@@ -64,7 +64,9 @@ def distanceEstimation(args):
     start = args['start_lat'], args['start_lon']
     dest = args['dest_lat'], args['dest_lon']
     atob = distance.vincenty(start, dest).miles
-
+    print start
+    print dest
+    print str(atob)
     # Usage of circuity concepts to derive roadmap distance
     # Source: http://www.sciencedirect.com/science/article/pii/S0965856401000441
     # Actual Value based on research using ~1950 trips an compare to distance from google

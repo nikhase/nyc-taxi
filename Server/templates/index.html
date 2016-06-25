@@ -111,6 +111,14 @@
         .ui-page-theme-a .ui-bar-inherit {
             border: none;
         }*/
+
+        .textDiv {
+            background:  rgba(119, 113, 113, 0.8);
+            height: 80%;
+            width: 100%;
+            border-radius: 5px;
+            border: 2px solid #660000;
+        }
 }
     </style>
 </head>
@@ -142,22 +150,42 @@
     </div>
 
 	<div data-role="footer" data-position="fixed">
-		<h4>Realtime Traffic Engine</h4>
+        <center>
+         <a href="#infoPage" class="appButton" data-role="button" data-icon="info">About</a>
+        </center>
 	</div>
 </div>
 
 <!-- Second Page Page-->
 <div data-role="page" id="secondpage">
 	<div data-role="header">
-        <a href="#startpage"class="appButton" data-role="button" data-icon="arrow-l">Back</a>
-		<p align="middle">Your Trip Data<p>
-
+        <a href="#startpage" class="appButton" data-role="button" data-icon="arrow-l">Back</a>
+		<p align="middle">Your Trip Data</p>
 	</div>
 
 	<div date-role="main" class="ui-content">
 
         <div>
             <ul data-role="listview" data-inset="true" class="appList" >
+                <li data-role="list-divider" data-inset="false" class="appLiDivider">
+                    <table>
+                        <tr>
+                            <td rowspan="2">
+                                <img id="icons" style="height: 50px; width:auto;" src="{{url_for('static', filename='a2b.png') }}" />
+                            </td>
+                            <td>
+                                <h2 style="font-size: 16px">Distance Estimation</h2>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <p style="font-size: 13px" id="distanceEstimation">2.3 Miles</p>
+                            </td>
+                        </tr>
+
+                    </table>
+                </li>
+
                 <!-- Item 1: Car -->
                 <li data-role="list-divider" data-inset="false" class="appLiDivider">
                     <table>
@@ -314,9 +342,34 @@
             </ul>
         </div>
 
-
+    </div>
 	<div data-role="footer" data-position="fixed">
 		<h4 id="timestamp"></h4>
+	</div>
+</div>
+
+<!-- Second Page Page-->
+<div data-role="page" id="infoPage">
+	<div data-role="header">
+        <a href="#startpage" class="appButton" data-role="button" data-icon="arrow-l">Back</a>
+		<p align="middle">About this App<p>
+	</div>
+
+	<div date-role="main" class="ui-content">
+        <h2>A2B</h2>
+        <div class="textDiv">
+        <p style="margin: 10px; " class="normalAppText">The Application "A2B" was created as part of a seminar at the <a href="https://www.fzi.de/startseite/">FZI</a>.</br>
+            It was created to make use of the Yellow Cab Trip Data that is provided by New York City. </br>
+            The Application tries to leverage realtime datastream as well as historic data in order to predict unexpected events.
+            These events may be traffic, a construction site or some other incident.
+            Beeing able to detect these events as well as providing information on several means of transportation, the user
+            is always able to choose the best way to get from A2B.
+
+        </p>
+        </div>
+    </div>
+    <div data-role="footer" data-position="fixed">
+		<h4>Realtime Traffic Engine</h4>
 	</div>
 </div>
 

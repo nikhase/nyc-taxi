@@ -1,13 +1,12 @@
-$(document).ready(function(){
-console.log("loaded")
-    
-    $('#btnGetGeo').click(function(){
+$(document).ready(function () {
+    console.log("loaded")
+
+    $('#btnGetGeo').click(function () {
         // Empty Error Textfield
         $('#errorBox').hide();
         $('#errortext').text("");
 
-        if (($('#autocomplete').val() == "") || $('#autocomplete2').val() =="" )
-        {
+        if (($('#autocomplete').val() == "") || $('#autocomplete2').val() == "") {
             // Set Error
             $('#errorBox').show();
             $('#errortext').text("Ups, you did not enter the correct info!");
@@ -32,6 +31,8 @@ console.log("loaded")
             }
             console.log(requestEnd)
             var cartime = $('#cartime');
+            var realtime = $('#realtime_traffic');
+            var historic = $('#historic_traffic');
             var biketime = $('#biketime');
             var walkingtime = $('#walkingtime');
             var cab_price = $('#cab_price');
@@ -58,143 +59,156 @@ console.log("loaded")
                     //  resultStart.html("Startpoint: </br>Latitude " + data.results[0].geometry.location.lat + "</br>" + 'Longitude ' + data.results[0].geometry.location.lng);
                     lata = data.results[0].geometry.location.lat;
                     lga = data.results[0].geometry.location.lng;
-                }
-            });
-
-            $.ajax({
-                url: "https://maps.googleapis.com/maps/api/geocode/json",
-                method: 'get',
-                data: {address: requestEnd},
-                dataType: 'json',
-                success: function (data) {
-                    //   resultEnd.html("Endpoint: </br>Latitude " + data.results[0].geometry.location.lat + "</br>" + 'Longitude ' + data.results[0].geometry.location.lng);
-                    latb = data.results[0].geometry.location.lat;
-                    lgb = data.results[0].geometry.location.lng;
-                    geo = "lata=" + lata + "&lga=" + lga + "&latb=" + latb + "&lgb=" + lgb;
-                    //link.html("http://localhost:5000/search?lata=" + lata +"&lga=" + lga + "&latb=" + latb + "&lgb=" + lgb);
-                    // http://127.0.0.1:5000/search?lta=40.770475&lga=-73.879504&ltb=40.751573&lgb=-73.991857
 
                     $.ajax({
-                        url: "/search?" + geo,
+                        url: "https://maps.googleapis.com/maps/api/geocode/json",
                         method: 'get',
+                        data: {address: requestEnd},
+                        dataType: 'json',
                         success: function (data) {
-                            cartime.html(data.taxi.historic);
-                            cab_price.html("$ " + data.prices.yellow_cab);
-                            uberblack_price.html("$ " + data.prices.uberBlack);
-                            ubersuv_price.html("$ " + data.prices.uberSUV);
-                            uberx_price.html("$ " + data.prices.uberX);
-                            uberxl_price.html("$ " + data.prices.uberXL);
+                            //   resultEnd.html("Endpoint: </br>Latitude " + data.results[0].geometry.location.lat + "</br>" + 'Longitude ' + data.results[0].geometry.location.lng);
+                            latb = data.results[0].geometry.location.lat;
+                            lgb = data.results[0].geometry.location.lng;
+                            geo = "lata=" + lata + "&lga=" + lga + "&latb=" + latb + "&lgb=" + lgb;
+                            //link.html("http://localhost:5000/search?lata=" + lata +"&lga=" + lga + "&latb=" + latb + "&lgb=" + lgb);
+                            // http://127.0.0.1:5000/search?lta=40.770475&lga=-73.879504&ltb=40.751573&lgb=-73.991857
+
+                            if (typeof lata !== "undefined" && typeof latb !== "undefined" && typeof lga !== "undefined" && typeof lgb !== "undefined") {
+                                $.ajax({
+                                    url: "/search?" + geo,
+                                    method: 'get',
+                                    success: function (data) {
+                                        cartime.html(data.taxi.historic);
+                                        realtime.html(data.taxi.realtime);
+                                        historic.html(data.taxi.historic);
+                                        cab_price.html("$ " + data.prices.yellow_cab);
+                                        uberblack_price.html("$ " + data.prices.uberBlack);
+                                        ubersuv_price.html("$ " + data.prices.uberSUV);
+                                        uberx_price.html("$ " + data.prices.uberX);
+                                        uberxl_price.html("$ " + data.prices.uberXL);
 
 
-                            biketime.html(data.bike.historic);
-                            bike_calories.html(data.calories.bike);
-                            bike_price.html("$ " + data.prices.citibike);
+                                        biketime.html(data.bike.historic);
+                                        bike_calories.html(data.calories.bike);
+                                        bike_price.html("$ " + data.prices.citibike);
 
-                            walkingtime.html(data.walking.estiamtion);
-                            walking_calories.html(data.calories.walking);
+                                        walkingtime.html(data.walking.estimation);
+                                        walking_calories.html(data.calories.walking);
 
-                            timestamp.html(data.info.timestamp);
+                                        timestamp.html(data.info.timestamp);
 
-                            var threshold = 5;
+                                        //NEED TO TRANSFORM STRING TO DATETIME
+                                        //DEVIATION IN PERCENT! NOT MINUTES
+                                        var threshold = 5;
+                                        console.log(data.taxi.realtime)
+                                        console.log(data.taxi.historic + 5)
 
-                            if (data.taxi.realtime <= data.taxi.historic) {
-                                $("#green").show();
+                                        if (data.taxi.realtime <= data.taxi.historic) {
+                                            $("#green").show();
+                                        }
+                                        else if (data.taxi.realtime <= data.taxi.historic + threshold) {
+                                            $("#orange").show();
+                                        }
+                                        else if (data.taxi.realtime > data.taxi.historic + threshold) {
+                                            $("#red").show();
+                                        }
+
+
+                                        //Go to second page
+                                        window.location = "#secondpage";
+
+                                    },
+                                    error: function () {
+                                        $('#errorBox').show();
+                                        $('#errortext').text("Sorry, something went wrong handling your request. Please try again!");
+                                    }
+                                })
                             }
-                            if (data.taxi.realtime <= data.taxi.historic + threshold) {
-                                $("#orange").show();
+                            else {
+                                $('#errorBox').show();
+                                $('#errortext').text("Not so fast! Search Again");
                             }
-                            if (data.taxi.realtime > data.taxi.historic + threshold) {
-                                $("#red").show();
-                            }
-
-
-                            //Go to second page
-                            window.location = "#secondpage";
-
-                        },
-                        error: function () {
-                            $('#errorBox').show();
-                            $('#errortext').text("Sorry, something went wrong handling your request. Please try again!");
                         }
-                    })
+                    });
                 }
             });
         }
+
     });
 })
 
 var placeSearch, autocomplete, autocomplete2;
 var componentForm = {
-  street_number: 'short_name',
-  route: 'long_name',
-  locality: 'long_name',
-  administrative_area_level_1: 'short_name',
-  country: 'long_name',
-  postal_code: 'short_name'
+    street_number: 'short_name',
+    route: 'long_name',
+    locality: 'long_name',
+    administrative_area_level_1: 'short_name',
+    country: 'long_name',
+    postal_code: 'short_name'
 };
 
 function initAutocomplete() {
-  // Create the autocomplete object, restricting the search to geographical
-  // location types.
-  autocomplete = new google.maps.places.Autocomplete(
-    /** @type {!HTMLInputElement} */
-    (document.getElementById('autocomplete')), {
-      types: ['geocode']
+    // Create the autocomplete object, restricting the search to geographical
+    // location types.
+    autocomplete = new google.maps.places.Autocomplete(
+        /** @type {!HTMLInputElement} */
+        (document.getElementById('autocomplete')), {
+            types: ['geocode']
+        });
+
+    // When the user selects an address from the dropdown, populate the address
+    // fields in the form.
+    autocomplete.addListener('place_changed', function () {
+        fillInAddress(autocomplete, "");
     });
 
-  // When the user selects an address from the dropdown, populate the address
-  // fields in the form.
-  autocomplete.addListener('place_changed', function() {
-    fillInAddress(autocomplete, "");
-  });
-
-  autocomplete2 = new google.maps.places.Autocomplete(
-    /** @type {!HTMLInputElement} */
-    (document.getElementById('autocomplete2')), {
-      types: ['geocode']
+    autocomplete2 = new google.maps.places.Autocomplete(
+        /** @type {!HTMLInputElement} */
+        (document.getElementById('autocomplete2')), {
+            types: ['geocode']
+        });
+    autocomplete2.addListener('place_changed', function () {
+        fillInAddress(autocomplete2, "2");
     });
-  autocomplete2.addListener('place_changed', function() {
-    fillInAddress(autocomplete2, "2");
-  });
 
 }
 
 function fillInAddress(autocomplete, unique) {
-  // Get the place details from the autocomplete object.
-  var place = autocomplete.getPlace();
+    // Get the place details from the autocomplete object.
+    var place = autocomplete.getPlace();
 
-  for (var component in componentForm) {
-    if (!!document.getElementById(component + unique)) {
-      document.getElementById(component + unique).value = '';
-      document.getElementById(component + unique).disabled = false;
+    for (var component in componentForm) {
+        if (!!document.getElementById(component + unique)) {
+            document.getElementById(component + unique).value = '';
+            document.getElementById(component + unique).disabled = false;
+        }
     }
-  }
 
-  // Get each component of the address from the place details
-  // and fill the corresponding field on the form.
-  for (var i = 0; i < place.address_components.length; i++) {
-    var addressType = place.address_components[i].types[0];
-    if (componentForm[addressType] && document.getElementById(addressType + unique)) {
-      var val = place.address_components[i][componentForm[addressType]];
-      document.getElementById(addressType + unique).value = val;
+    // Get each component of the address from the place details
+    // and fill the corresponding field on the form.
+    for (var i = 0; i < place.address_components.length; i++) {
+        var addressType = place.address_components[i].types[0];
+        if (componentForm[addressType] && document.getElementById(addressType + unique)) {
+            var val = place.address_components[i][componentForm[addressType]];
+            document.getElementById(addressType + unique).value = val;
+        }
     }
-  }
 }
 //google.maps.event.addDomListener(window, "load", initAutocomplete);
 
 function geolocate() {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(function(position) {
-      var geolocation = {
-        lat: position.coords.latitude,
-        lng: position.coords.longitude
-      };
-      var circle = new google.maps.Circle({
-        center: geolocation,
-        radius: position.coords.accuracy
-      });
-      autocomplete.setBounds(circle.getBounds());
-    });
-  }
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function (position) {
+            var geolocation = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude
+            };
+            var circle = new google.maps.Circle({
+                center: geolocation,
+                radius: position.coords.accuracy
+            });
+            autocomplete.setBounds(circle.getBounds());
+        });
+    }
 }
 

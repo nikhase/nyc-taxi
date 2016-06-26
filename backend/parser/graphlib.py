@@ -24,15 +24,7 @@ def parseDataframe(dataframe):
 
 
     for index, row in dataframe.iterrows():
-
-        date = parser.parse(row['dropoff_datetime'])
-
-        if(date.day == 10):
-            addToGraph(row)
-        elif(date.day == 20):
-            continue
-        elif(date.day > 10):
-            break
+        addToGraph(row)
 
     return graph;
 

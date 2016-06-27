@@ -40,6 +40,8 @@ def get_info():
             else:
 
                 # Create Hard Coded Result
+                # Just for testing purposes
+                # Not entire backend needed to test frontend
                 result ={}
 
                 prices = {}
@@ -71,6 +73,7 @@ def get_info():
                 result['taxi'] = taxi
                 result['bike'] = bike
                 result['info'] = info
+                result['estimated_distance'] = "4.5"
                 print result
 
         except Exception as e:
@@ -98,23 +101,24 @@ def badRequest(message ='No Error message!'):
 # Start server
 if __name__ == '__main__':
     # Flag to use Realtime Data
-    realtime = True
+    realtime = False
 
     #Define the Speed of the Datastream
     streamspeed= 2
 
     # Flag to use hard coded result for frontend testing
-    hardcodedResult = False
+    hardcodedResult = True
 
     # @@@Check if Database is reachable
 
 
     if realtime:
         # Location for the csv File
-        path = "/Users/larshelin/Documents/Studium/Master/Semester 3/Seminar/Data/oneweekfrom20130107.csv"
+        path = "/Users/larshelin/Documents/Studium/Master/Semester 3/Seminar/Data/taxi_oneweekfrom20140505.csv"
 
         # Configures, Start and Runs the Realtime Data stream
         rtdb = RealtimeDB(path, startIndex=50000, rows=20000, speed=streamspeed, reset=True)
 
     #app.debug = True
     app.run()
+    #app.run(host='0.0.0.0')

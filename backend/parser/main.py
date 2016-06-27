@@ -3,10 +3,11 @@ import graphlib as gl
 import time
 import os as os
 
-path = os.path.expanduser("~/Documents/Studium/Master/Semester 3/Seminar/Data/yellow_tripdata_2014-01.csv")
+path="/Users/larshelin/Documents/Studium/Master/Semester 3/Seminar/Data/oneweekfrom20130107.csv"
+
+df =pd.read_csv(path, nrows=2000)
 
 #df = pd.read_csv('trips_shortend.csv')
-df = pd.read_csv(path)
 #print(df.columns.values)
 
 #graph = gl.parseEvent(df.ix[0]);
@@ -20,5 +21,5 @@ elapsed = end-start
 perEvent = elapsed / len(df)
 print(perEvent)
 
-graph.serialize(destination='output.txt', format='turtle')
+graph.serialize(destination='output2000.txt', format='turtle')
 

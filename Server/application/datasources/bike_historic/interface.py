@@ -1,10 +1,12 @@
 import urllib2
 import json
 import datetime as dt
+import treelib
+import numpy
+from dateutil import parser
+from geopy import distance
 
-
-
-def search(args):
+def searchGoogle(args):
     '''
     Getting the estimate travel time for biking in minutes
     :param args:
@@ -27,3 +29,35 @@ def search(args):
         return str(time)
 
     return str(tripTime)
+
+
+# Search Using the Treelib
+def search(args):
+    # treeImport()
+    start = args['start_lat'], args['start_lon']
+    dest = args['dest_lat'], args['dest_lon']
+
+    dist = distance.vincenty(start, dest).miles
+    '''['pickup_datetime_day', 'pickup_datetime_dayofweek', 'pickup_datetime_hour',
+    'pickup_latitude', 'pickup_longitude', 'dropoff_latitude', 'dropoff_longitude',
+    'trip_time_in_mins']'''
+
+    #2013-01-07 07:43:03.013168+00:00
+    timestamp = parser.parse(args['timestamp'])
+    val = []
+    #val.append(numpy.float64(timestamp.day))
+    val.append(numpy.float64(timestamp.weekday()))
+    val.append(numpy.float64(timestamp.hour))
+    val.append(numpy.float64(args['start_lat']))
+    val.append(numpy.float64(args['start_lon']))
+    val.append(numpy.float64(args['dest_lat']))
+    val.append(numpy.float64(args['dest_lon']))
+
+    res = treelib.getEstimatedTime(val)
+    result = {}
+
+    hours = float(dist / res[0])
+    minutes = hours * 60.0
+    #print "Prediction in hours: " + str(hours)
+    result= str(dt.timedelta(minutes=int(minutes)))
+    return result

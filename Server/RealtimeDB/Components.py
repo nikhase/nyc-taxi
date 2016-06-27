@@ -48,6 +48,7 @@ class GraphHandler:
     def __initialize(self, data):
         date = dateutil.parser.parse(data['pickup_datetime'])
         self.baseTime = date
+        print str(self.baseTime)
         #self.baseTime = dt.datetime.strptime(date, "%Y-%m-%dT%H:%M:%S")
 
 
@@ -99,7 +100,8 @@ class Reader(Thread):
         self.__df['pickup_datetime'] = pd.to_datetime(self.__df['pickup_datetime'], format='%Y-%m-%d %H:%M:%S')
         self.__df['dropoff_datetime'] = pd.to_datetime(self.__df['dropoff_datetime'], format='%Y-%m-%d %H:%M:%S')
         self.__df.sort_values("pickup_datetime")
-        self.__df.index = self.__df['pickup_datetime']
+        #self.__df.index = self.__df['pickup_datetime']
+        #self.__df.index = range(0, len(self.__df))
 
         #Set up observer
         self.__observers = []
@@ -114,11 +116,12 @@ class Reader(Thread):
         print "Starting at: " + str(self.__I) + " to " + str(self.__I + self.__rows)
 
         for i in xrange(self.__I, self.__I + self.__rows - 1):
-            date_1 = self.__df.ix[i][3]
-            date_2 = self.__df.ix[i + 1][3]
+            date_1 = self.__df.ix[i]['pickup_datetime']
+            date_2 = self.__df.ix[i + 1]['pickup_datetime']
             diff = (pd.to_datetime(date_2) - pd.to_datetime(date_1)).seconds * self._speedMultiplier
             msg = str(self.__df.ix[i].to_json(date_format="iso"))
             self.notify_observers(msg, action="add")
+            #print diff
             time.sleep(diff)
 
         print "Done reading file."

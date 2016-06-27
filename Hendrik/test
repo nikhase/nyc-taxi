@@ -1,0 +1,36 @@
+import preprocessing as bsp
+import pandas as pd
+cleaner = bsp.cleaner()
+
+# Start und End-date festlegen
+start_date = pd.to_datetime('2013-01-07')
+end_date=pd.to_datetime('2013-01-12')
+dataRoot_data = '/Users/Schlendrikovic/Documents/PyCharm_git/nyc-taxi/backend/streamer/yellow_tripdata_2013-01.csv'
+dataRoot_week = ('/Users/Schlendrikovic/Documents/Seminar/nyc-taxi/Hendrik/taxidata_weekfrom' + str(start_date)[:10] + '.csv')
+print dataRoot_week
+print "Hauptdatensatz aus Verzeichnis: " , dataRoot_data
+print "Ausgeschnittene Woche gespeichert in: " , dataRoot_week
+
+
+
+df = cleaner.slice_data(dataRoot_data,dataRoot_week,start_date, end_date)
+df = cleaner.week_import(dataRoot_week)
+
+
+# Speichert alle wichtigen Header in Need und alle unwichtigen, die geloescht werden sollen in drop
+columns = df.columns.values.tolist()
+list_need = ['pickup_datetime' , 'dropoff_datetime', 'pickup_longitude' ,'trip_distance',  'pickup_latitude' , 'dropoff_longitude' , 'dropoff_latitude']
+list_drop = [x for x in columns if x not in list_need]
+df = cleaner.drop_overhead(list_drop)
+print df.isnull().sum()
+
+df = cleaner.drop_zero_data(list_need)
+
+print df.isnull().sum()
+# Null / np.nan / None rausfiltern
+# print df.isnull().sum() alle o.k.
+
+#no_of_zeros = (df==0).astype(int).sum() # awesome, awesome, AWESOME!!! :-)
+#no_of_zeros.apply(lambda x: x/taxidata.medallion.count())
+#print no_of_zeros
+

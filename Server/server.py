@@ -101,13 +101,13 @@ def badRequest(message ='No Error message!'):
 # Start server
 if __name__ == '__main__':
     # Flag to use Realtime Data
-    realtime = False
+    realtime = True
 
     #Define the Speed of the Datastream
     streamspeed= 2
 
     # Flag to use hard coded result for frontend testing
-    hardcodedResult = True
+    hardcodedResult = False
 
     # @@@Check if Database is reachable
 

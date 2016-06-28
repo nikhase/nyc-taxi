@@ -12,14 +12,14 @@ def getData(coordinates, radius, online=True):
 
     radius = 0.2
 
-    for i in range(9):
+    for i in range(8):
         sqlStr = duration(coordinates['start_lat'], coordinates['start_lon'], coordinates['dest_lat'],
                           coordinates['dest_lon'], radius)
         cur.execute(sqlStr)
         rows = cur.fetchall()
 
         if len(rows) >= 1:
-            print "Radius: " + str(radius)
+            #print "Radius: " + str(radius)
             break
         else:
             radius += 0.1

@@ -16,8 +16,8 @@ def search(args):
         radius = 1
 
     # Get the results
+    # Setting radius here, however it is varied within the get Data method starting at 200 meters
     results = json.loads(db_access.getData(args, radius=radius, online=True))
-    #print str(results)
 
     if len(results) == 0:
         result = dt.timedelta(hours=0, minutes=0, seconds=0, microseconds=0)
@@ -32,19 +32,25 @@ def search(args):
         dist = distance.vincenty(a, b)
 
         # Calculate the deviation from the Original Requested location
-        deviation = distance.vincenty(a, start) + distance.vincenty(b, dest)
+        deviation = distance.vincenty(a, start).km + distance.vincenty(b, dest).km
 
         res['deviation'] = deviation
         delta = res['duration']
         res['adjustedDurationS'] = (atob/ dist.km) * int(delta)
 
-    devSum = sum(res['deviation'].km for res in results)
+    devSum = sum(res['deviation'] for res in results)
     durSum = 0
 
     # Add up the weighted times
     for res in sorted(results, key=lambda k: k['deviation']):
-        alpha = res['deviation'].km / devSum
-        durSum += res['adjustedDurationS'] * alpha
+        alpha = res['deviation'] / devSum
+        #print str(alpha)
+
+        # Only one result, weighting is not necessary
+        if not alpha == 1:
+            durSum += res['adjustedDurationS'] * (1 - alpha)
+        else:
+            durSum = res['adjustedDurationS']
 
     # Add Information
     result = {}

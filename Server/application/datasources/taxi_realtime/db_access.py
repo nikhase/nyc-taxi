@@ -30,6 +30,7 @@ def getData(coordinates, radius, online=True):
     dictResults = []
     for result in rows:
         res = {}
+        res['timestamp'] = str(result[0])
         res['duration'] = str(result[5])
         res['start_lat'] = str(result[1])
         res['start_long'] = str(result[2])

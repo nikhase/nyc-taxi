@@ -6,6 +6,12 @@ $(document).ready(function () {
         $('#errorBox').hide();
         $('#errortext').text("");
 
+        $("#green").hide();
+        $("#orange").hide();
+        $("#red").hide();
+
+        $("#map").empty()
+
         if (($('#autocomplete').val() == "") || $('#autocomplete2').val() == "") {
             // Set Error
             $('#errorBox').show();

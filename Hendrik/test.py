@@ -5,9 +5,9 @@ import pandas as pd
 # Start und End-date festlegen
 start_date = pd.to_datetime('2014-05-05')
 end_date=pd.to_datetime('2014-05-12')
-dataRoot_month_fileloc = 'data/yellow_tripdata_2014-05.csv'
+dataRoot_month_fileloc = 'data/yellow_tripdata_2013-05.csv'
 # dataRoot_week_fileloc = ('..data/'.csv')
-dataRoot_tree_model = ('..treelib/', cleaner.filename_tree)
+#dataRoot_tree_model = ('..treelib/', cleaner.filename_tree)
 upperleft = [40.856406, -74.020642] # Ridgefield ( lat / long )
 lowerright = [40.641547, -73.778118] # JFK  ( lat / long )
 data_type = 'Bike' # Bike or Taxi

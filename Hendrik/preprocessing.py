@@ -12,7 +12,7 @@ import json as js
 global filename;
 
 
-    def data_import(self, dataRoot_import):
+    def data_import(dataRoot_import):
         data = pd.read_csv(dataRoot_import) #
         # Parse the datestrings to datetime-objects
         data['pickup_datetime'] = pd.to_datetime(data['pickup_datetime'], format = '%Y-%m-%d %H:%M:%S')
@@ -20,7 +20,7 @@ global filename;
         data['trip_time'] = data.dropoff_datetime - data.pickup_datetime
         return data
 
-    def slice_data(self, dataRoot_data, dataRoot_week, start_date, end_date):
+    def slice_data(dataRoot_data, dataRoot_week, start_date, end_date):
         # Initialize the filename
         filename = ('taxi_from_' + start_date + 'to_' + end_date)
         sdata = pd.read_csv(dataRoot_data)
@@ -41,12 +41,12 @@ global filename;
         data = week
         return data
 
-    def drop_overhead(self,data,list_drop):
+    def drop_overhead(data,list_drop):
         for x in list_drop:
             data = data.drop(str(x), axis=1)
         return data
 
-    def drop_anomaly(self , data):
+    def drop_anomaly(data):
         lower_bound = 0.5
         upper_bound = 2.5
         data['avg_amount_per_minute'] = (data.fare_amount - 2.5) / (data.trip_time / np.timedelta64(1, 'm'))
@@ -57,24 +57,20 @@ global filename;
         data = data.drop(anomaly.index)
         return data
 
-    def bounding_box(self , data):
-        #Gesamt-Rahmen in dem die Application stattfinden soll ( Breitengrad / Längengrad lat/long )
-        #Zeile 57  Parameter: upperleft , lower_right Koordinaten
-        jfk_geodata = (40.641547, -73.778118) #lowerright (lat/long)
-        ridgefield_geodata = (40.856406, -74.020642) #upperleft (lat/long)
-        data = data.loc[(data['dropoff_latitude'] > jfk_geodata[0]) &
-                               (data['dropoff_longitude'] < jfk_geodata[1]) &
-                               (data['dropoff_latitude'] < ridgefield_geodata[0]) &
-                               (data['dropoff_longitude'] > ridgefield_geodata[1]) &
-                               (data['pickup_latitude'] > jfk_geodata[0]) &
-                               (data['pickup_longitude'] < jfk_geodata[1]) &
-                               (data['pickup_latitude'] < ridgefield_geodata[0]) &
-                               (data['pickup_longitude'] > ridgefield_geodata[1])
+    def bounding_box(data, upperleft , lowerright):
+        data = data.loc[(data['dropoff_latitude'] > lowerright[0]) &
+                               (data['dropoff_longitude'] < lowerright[1]) &
+                               (data['dropoff_latitude'] < upperleft[0]) &
+                               (data['dropoff_longitude'] > upperleft[1]) &
+                               (data['pickup_latitude'] > lowerright[0]) &
+                               (data['pickup_longitude'] < lowerright[1]) &
+                               (data['pickup_latitude'] < upperleft[0]) &
+                               (data['pickup_longitude'] > upperleft[1])
                                ]
         return data
 
 
-    def train_decision_tree(self, time_regression_df, test_size, random_state, max_depth, export_testset):
+    def train_decision_tree( time_regression_df, test_size, random_state, max_depth, export_testset):
 
         y = time_regression_df["trip_time_in_mins"]
         X = time_regression_df.ix[:, 0:6]
@@ -121,7 +117,7 @@ global filename;
             js.dump(tree_meta_data, fp)
 
 
-    def train_random_forest(self, time_regression_df, test_size, random_state, max_depth, export_testset):
+    def train_random_forest( time_regression_df, test_size, random_state, max_depth, export_testset):
         y = time_regression_df["trip_time_in_mins"]
         X = time_regression_df.ix[:, 0:6]
         X_train, X_test, y_train, y_test = cv.train_test_split(X, y, test_size=test_size, random_state=random_state)
@@ -135,7 +131,7 @@ global filename;
 
         return rd_regtree
 
-def create_tree_dataframe(self, data):
+def create_tree_dataframe(data):
         # Baum DataFrame:
         time_regression_df = pd.DataFrame([
             data['pickup_datetime'].dt.dayofweek,
@@ -154,6 +150,6 @@ def create_tree_dataframe(self, data):
 
         return time_regression_df
 
-    def dump_tree(self, decision_model , dataRoot_tree_model):
+    def dump_tree(decision_model , dataRoot_tree_model):
         joblib.dump(decision_model , str(dataRoot_tree_model), protocol=2)
 

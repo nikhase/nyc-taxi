@@ -146,7 +146,10 @@ $(document).ready(function () {
         }
 
     });
-})
+
+    $('#thirdpage').on("pagebeforeshow","#pagetwo",function() { // When entering pagetwo
+        alert("paget");
+    });
 
 var placeSearch, autocomplete, autocomplete2;
 var componentForm = {
@@ -162,13 +165,15 @@ function addMap()
 {
     console.log("Init Map")
     //Prepare Map
-    var myLatLng = {lat: 40.773382, lng: -73.982392};
+     var mapDiv = document.getElementById("map");
+        var latlng = new google.maps.LatLng(40.773382, -73.982392);
+        var mapOptions =
+        {
+            zoom: 12,
+            center: latlng,
+        };
+        var map = new google.maps.Map(mapDiv, mapOptions);
 
-
-    var map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 12,
-        center: myLatLng
-    });
 
     var a = {lat: lata, lng: lga};
 
@@ -183,7 +188,7 @@ function addMap()
           position: b,
           map: map,
     });
-
+google.maps.event.trigger(map, "resize")
 }
 
 function initAutocomplete() {

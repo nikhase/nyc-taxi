@@ -173,7 +173,7 @@
 	<div date-role="main" class="ui-content">
 
         <div>
-            <a href="#thirdpage" data-role="button" onclick="addMap()">View Map</a>
+            <a href="#thirdpage" data-role="button">View Map</a>
         </div>
 
         <div>
@@ -359,7 +359,7 @@
 	</div>
 </div>
 
-<!-- Second Page Page-->
+<!-- Info Page Page-->
 <div data-role="page" id="infoPage">
 	<div data-role="header">
         <a href="#startpage" class="appButton" data-role="button" data-icon="arrow-l">Back</a>
@@ -384,7 +384,7 @@
 	</div>
 </div>
 
-<!-- Second Page Page-->
+<!-- Third Page Page-->
 <div data-role="page" id="thirdpage">
 	<div data-role="header">
         <a href="#secondpage" class="appButton" data-role="button" data-icon="arrow-l">Back</a>
@@ -392,7 +392,11 @@
 	</div>
 
 	<div date-role="main" class="ui-content">
+        <div>
+            <a href="#thirdpage" data-role="button" onclick="addMap()">View Map</a>
+
         <div id="map"></div>
+             </div>
     </div>
     <div data-role="footer" data-position="fixed">
 		<h4>Realtime Traffic Engine</h4>

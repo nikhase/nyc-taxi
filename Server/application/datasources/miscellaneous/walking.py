@@ -8,7 +8,7 @@ def search(args):
     :return: Time as stringified timedelta hh:mm:ss
     '''
     # Parameters
-    circuityFactor = 1.428082
+    circuityFactor = 1.416
     avgWalkingSpeed = 3 #mph
 
     # Start and Endpoints

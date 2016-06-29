@@ -152,6 +152,7 @@ $(document).ready(function () {
     
 
     var placeSearch, autocomplete, autocomplete2;
+
     var componentForm = {
         street_number: 'short_name',
         route: 'long_name',
@@ -220,6 +221,13 @@ function initAutocomplete() {
 function fillInAddress(autocomplete, unique) {
     // Get the place details from the autocomplete object.
     var place = autocomplete.getPlace();
+    var componentForm = {
+        street_number: 'short_name',
+        route: 'long_name',
+        locality: 'long_name',
+        administrative_area_level_1: 'short_name',
+        country: 'long_name',
+        postal_code: 'short_name'}
 
     for (var component in componentForm) {
         if (!!document.getElementById(component + unique)) {

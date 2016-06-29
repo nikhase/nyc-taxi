@@ -10,23 +10,18 @@ import json as js
 from geopy.distance import vincenty
 
 global filename_prefix
-global filename_tree
+filename_prefix = ''
 
 
 # filename_tree
 
 
+
 def data_import(origin_location, data_type):
+    # set the filename according to the sort of data (taxi/bike) and the sliced date.
+    global filename_prefix
+    filename_prefix = data_type
     data = pd.read_csv(origin_location)  #
-    # Parse the datestrings to datetime-objects
-    data['pickup_datetime'] = pd.to_datetime(data['pickup_datetime'], format='%Y-%m-%d %H:%M:%S')
-    data['dropoff_datetime'] = pd.to_datetime(data['dropoff_datetime'], format='%Y-%m-%d %H:%M:%S')
-    data['trip_time'] = data.dropoff_datetime - data.pickup_datetime
-    return data
-
-
-def data_import(dataRoot_import, data_type):
-    data = pd.read_csv(dataRoot_import)  #
     # Parse the datestrings to datetime-objects
 
     if data_type == 'Bike':
@@ -49,44 +44,82 @@ def data_import(dataRoot_import, data_type):
     return data
 
 
-def slice_data(dataFrame, save_output_in_csv, start_date, end_date):
+def slice_data(data_frame, save_output_in_csv, start_date, end_date):
     # Be aware: the end_date is not included in the dataFrame!
-    # Initialize the filename_prefix
-    filename_prefix = ('taxi_from_', start_date, 'to_', end_date)
+    # Initialize the filename_prefi
     # data = pd.read_csv(dataRoot_data)
     # dataFrame['pickup_datetime'] = pd.to_datetime(dataFrame['pickup_datetime'], format='%Y-%m-%d %H:%M:%S')
     # dataFrame['dropoff_datetime'] = pd.to_datetime(dataFrame['dropoff_datetime'], format='%Y-%m-%d %H:%M:%S')
-    start_date = pd.to_datetime(start_date)
+    global filename_prefix
+    filename_prefix = [filename_prefix, '_from_', start_date, 'to_', end_date]
     start_date = pd.to_datetime(start_date)
     end_date = pd.to_datetime(end_date)
-    mask = (dataFrame['pickup_datetime'] >= start_date) & (dataFrame['pickup_datetime'] < end_date)
-    # sliceDF = pd.DataFrame()
-    sliceDF = dataFrame[mask]
-    sliceDF = sliceDF.sort_values('pickup_datetime')
-    sliceDF.reset_index(drop=True, inplace=True)
+    mask = (data_frame['pickup_datetime'] >= start_date) & (data_frame['pickup_datetime'] < end_date)
+    # slice_df = pd.DataFrame()
+    slice_df = data_frame[mask]
+    slice_df = slice_df.sort_values('pickup_datetime')
+    slice_df.reset_index(drop=True, inplace=True)
     if save_output_in_csv:
-        sliceDF.to_csv((filename_prefix, '.csv'))
-    return sliceDF
+        slice_df.to_csv((filename_prefix, '.csv'))
+    return slice_df
 
 
-def drop_overhead(data, list_drop):
+def drop_columns(data, list_drop):
     for x in list_drop:
         data = data.drop(str(x), axis=1)
     return data
 
 
-def drop_anomaly(data):
+def drop_anomaly(data, save_report=True):
     lower_bound = 0.5
     upper_bound = 2.5
-    data['avg_amount_per_minute'] = (data.fare_amount - 2.5) / (data.trip_time / np.timedelta64(1, 'm'))
     data = data.replace(np.float64(0), np.nan)
+    # correct the fare amount for the initial charge of 2.5$
+    data['avg_amount_per_minute'] = (data.fare_amount - 2.5) / (data.trip_time / np.timedelta64(1, 'm'))
+    # remove all rows with .nan values
+    # save the removed rows by condition
+    anomaly_report = {'no_valid_dropoff:': 0,
+                      'no_valid_pickup': 0,
+                      'no_triptime': 0,
+                      'no_trip_distance': 0,
+                      'avg_amount_per_minute_too_low': 0,
+                      'avg_amount_per_minute_too_high': 0,
+                      'overall_dropped_percentage': 0}
+    prior_length = 0
+    anomaly = data.loc[(data['dropoff_longitude'].isnull()) | (data['dropoff_latitude'].isnull())]
+    anomaly_report['no_valid_dropoff'] = (len(anomaly) - prior_length)
+    data = data.drop(anomaly.index, errors='ignore')
+    prior_length = len(anomaly)
 
-    anomaly = data.loc[(data['dropoff_longitude'].isnull()) | (data['dropoff_latitude'].isnull()) | (
-    data['pickup_longitude'].isnull()) | (data['pickup_latitude'].isnull()) | (data['trip_time'].isnull()) | (
-                       data['trip_distance'].isnull())]
-    anomaly = anomaly.append(
-        data.loc[(data['avg_amount_per_minute'] > upper_bound) | (data['avg_amount_per_minute'] < lower_bound)])
-    data = data.drop(anomaly.index)
+    anomaly.append(data.loc[data['pickup_longitude'].isnull() | (data['pickup_latitude'].isnull())])
+    anomaly_report['no_valid_dropoff'] = (len(anomaly) - prior_length)
+    data = data.drop(anomaly.index, errors='ignore')
+    prior_length = len(anomaly)
+
+    anomaly.append(data.loc[(data['trip_time'].isnull())])
+    anomaly_report['no_valid_dropoff'] = (len(anomaly) - prior_length)
+    data = data.drop(anomaly.index, errors='ignore')
+    prior_length = len(anomaly)
+
+    anomaly.append(data.loc[data['trip_distance'].isnull()])
+    anomaly_report['no_valid_dropoff'] = (len(anomaly) - prior_length)
+    data = data.drop(anomaly.index, errors='ignore')
+    prior_length = len(anomaly)
+
+    anomaly.append(data.loc[(data['avg_amount_per_minute'] > upper_bound)])
+    anomaly_report['avg_amount_per_minute_too_high'] = (len(anomaly) - prior_length)
+    data = data.drop(anomaly.index, errors='ignore')
+    prior_length = len(anomaly)
+
+    anomaly.append(data.loc[(data['avg_amount_per_minute_too_low'] < lower_bound)])
+    anomaly_report['avg_amount_per_minute_too_low'] = (len(anomaly) - prior_length)
+    data = data.drop(anomaly.index, errors='ignore')
+
+    anomaly_report['overall_dropped_percentage'] = len(anomaly) / (len(anomaly) + len / data)
+    if save_report:
+        with open((filename_prefix, '_anomaly_metadata.json', 'w')) as fp:
+            js.dump(anomaly_report, fp)
+
     return data
 
 
@@ -166,7 +199,7 @@ def train_random_forest(time_regression_df, test_size, random_state, max_depth, 
     return rd_regtree
 
 
-def create_tree_dataframe(data):
+def create_tree_df(data):
     # Baum DataFrame:
     time_regression_df = pd.DataFrame([
         data['pickup_datetime'].dt.dayofweek,

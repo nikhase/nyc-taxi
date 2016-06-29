@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 from flask import Flask, jsonify, render_template, request, abort, send_from_directory, Response
-import application.application as ap
+# import application.application as ap
 from RealtimeDB.realtimedb import RealtimeDB
 import datetime as dt
 

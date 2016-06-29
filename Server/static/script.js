@@ -78,7 +78,17 @@ $(document).ready(function () {
                             //link.html("http://localhost:5000/search?lata=" + lata +"&lga=" + lga + "&latb=" + latb + "&lgb=" + lgb);
                             // http://127.0.0.1:5000/search?lta=40.770475&lga=-73.879504&ltb=40.751573&lgb=-73.991857
 
-                            if (typeof lata !== "undefined" && typeof latb !== "undefined" && typeof lga !== "undefined" && typeof lgb !== "undefined") {
+                            if (typeof lata == "undefined" || typeof latb == "undefined" || typeof lga == "undefined" || typeof lgb == "undefined"
+                            ) {
+                                $('#errorBox').show();
+                                $('#errortext').text("Not so fast! Search Again");
+                            }
+                            else if (lata < 40 || latb < 40 || lga > -73 || lgb > -73 || lata > 41 || latb > 41 || lga < -74.5 || lgb < -74.5 ) {
+                                $('#errorBox').show();
+                                $('#errortext').text("Please choose a Location within New York City");
+                                console.log("Nicht New York")
+                            }
+                            else {
                                 $.ajax({
                                     url: "/search?" + geo,
                                     method: 'get',
@@ -132,10 +142,6 @@ $(document).ready(function () {
                                     }
                                 })
                             }
-                            else {
-                                $('#errorBox').show();
-                                $('#errortext').text("Not so fast! Search Again");
-                            }
                         }
                     });
                 }
@@ -163,7 +169,7 @@ function addMap() {
     var latlng = new google.maps.LatLng(40.773382, -73.982392);
     var mapOptions =
     {
-        zoom: 12,
+        zoom: 11,
         center: latlng,
     };
     var map = new google.maps.Map(mapDiv, mapOptions);

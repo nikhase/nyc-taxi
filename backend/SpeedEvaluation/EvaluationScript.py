@@ -1,7 +1,7 @@
 import rdflib
 import datetime
 import psycopg2
-import geotool as gt
+
 
 #SPARQL
 def durationSPARQL(originLat, originLong, destLat, destLong, radius=100):
@@ -30,7 +30,7 @@ def durationSPARQL(originLat, originLong, destLat, destLong, radius=100):
     query += "FILTER ( (?destLat >= " + str(boundsDest[0]) + ") && (?destLat <= " + str(boundsDest[2]) + ") "
     query += "&& (?destLong >= " + str(boundsDest[1]) + ") && (?destLong <= " + str(boundsDest[3]) + ") )"
 
-    query += "} LIMIT 100"
+    query += "} "
     # print query
     return query
 
@@ -69,7 +69,7 @@ def getData(coordinates, radius):
 # Testing the speed of the rdflib SPARQL Query
 g = rdflib.Graph()
 
-g.load("output1500.txt", format="turtle")
+g.load("output2000.txt", format="turtle")
 
 
 Coordinates = {}
@@ -84,32 +84,38 @@ Coordinates['dest_lon'] = -73.879504
 
 sqlTimes = []
 sparqlTimes = []
+print (str(g.__len__()/11))
 
 # Test it 10 times
 for i in range(10):
     start = datetime.datetime.now()
     query = durationSPARQL(Coordinates['start_lat'], Coordinates['start_lon'], Coordinates['dest_lat'], Coordinates['dest_lon'])
     res = g.query(query)
-
+    #print (str(g.__len__()/11))
     for result in res:
         #print result
         continue
 
     elapsedTime = datetime.datetime.now() - start
-    sparqlTimes.append(elapsedTime.microseconds)
-    #print "SPARQL Time elapsed: " + str(elapsedTime)
+    sparqlTimes.append(elapsedTime.total_seconds())
+    #print elapsedTime
+    print "SPARQL Time elapsed: " + str(elapsedTime)
 
-    start = datetime.datetime.now()
+    start1 = datetime.datetime.now()
     results = getData(Coordinates, 1)
 
-    elapsedTime = datetime.datetime.now() - start
+    elapsedTime = datetime.datetime.now() - start1
 
-    #print "SQL Time elapsed: " + str(elapsedTime)
-    sqlTimes.append(elapsedTime.microseconds)
+    print "SQL Time elapsed: " + str(elapsedTime)
+    sqlTimes.append(elapsedTime.total_seconds())
 
 
-'''
-with open("result1500.txt", "w") as text_file:
-    text_file.writelines("n = 1500, Runs = 10 \n" )
-    text_file.writelines("SPARQL Average: " + str(sum(sparqlTimes) /10) + " Microseconds per Query \n")
-    text_file.writelines("SQL Average: " + str(sum(sqlTimes) /10) + " Microseconds per Query \n")'''
+print  "SPARQL Average: " + str(sum(sparqlTimes) /10)
+print  "SQL Average: " + str(sum(sqlTimes) /10)
+
+
+
+with open("result2000.txt", "w") as text_file:
+    text_file.writelines("n = 2000, Runs = 10 \n" )
+    text_file.writelines("SPARQL Average: " + str(sum(sparqlTimes) /10) + " Seconds per Query \n")
+    text_file.writelines("SQL Average: " + str(sum(sqlTimes) /10) + " Seconds per Query \n")

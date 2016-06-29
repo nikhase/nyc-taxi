@@ -5,7 +5,7 @@ import os as os
 
 path="/Users/larshelin/Documents/Studium/Master/Semester 3/Seminar/Data/oneweekfrom20130107.csv"
 
-df =pd.read_csv(path, nrows=2000)
+df =pd.read_csv(path, nrows=11000)
 
 #df = pd.read_csv('trips_shortend.csv')
 #print(df.columns.values)
@@ -21,5 +21,5 @@ elapsed = end-start
 perEvent = elapsed / len(df)
 print(perEvent)
 
-graph.serialize(destination='output2000.txt', format='turtle')
+graph.serialize(destination='output11000.txt', format='turtle')
 

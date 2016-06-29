@@ -1,25 +1,28 @@
 import pandas as pd
 import numpy as np
+from sklearn import cross_validation as cv
+from sklearn.tree import DecisionTreeRegressor
+import numpy as np
+import matplotlib.pyplot as plt
+import time
+from sklearn.externals import joblib
+from sklearn.ensemble import RandomForestRegressor
 
-class cleaner:
 
-    def __init__(self):
-        self._data = pd.DataFrame()
-
-    def week_import(self, dataRoot_import):
-        self._data = pd.read_csv(dataRoot_import)
-        self._data['pickup_datetime'] = pd.to_datetime(self._data['pickup_datetime'], format = '%Y-%m-%d %H:%M:%S')
-        self._data['dropoff_datetime'] = pd.to_datetime(self._data['dropoff_datetime'], format ='%Y-%m-%d %H:%M:%S')
-        return self._data
+    def data_import(self, dataRoot_import):
+        data = pd.read_csv(dataRoot_import)
+        data['pickup_datetime'] = pd.to_datetime(data['pickup_datetime'], format = '%Y-%m-%d %H:%M:%S')
+        data['dropoff_datetime'] = pd.to_datetime(data['dropoff_datetime'], format ='%Y-%m-%d %H:%M:%S')
+        data['trip_time'] = data.dropoff_datetime - data.pickup_datetime
+        return data
 
     def slice_data(self, dataRoot_data, dataRoot_week, start_date, end_date):
-        self._data = pd.read_csv(dataRoot_data)
-        self._data['pickup_datetime'] = pd.to_datetime(self._data['pickup_datetime'], format='%Y-%m-%d %H:%M:%S')
-        self._data['dropoff_datetime'] = pd.to_datetime(self._data['dropoff_datetime'], format='%Y-%m-%d %H:%M:%S')
-        start_date = pd.to_datetime(start_date)
+        sdata = pd.read_csv(dataRoot_data)
+        data['pickup_datetime'] = pd.to_datetime(self._data['pickup_datetime'], format='%Y-%m-%d %H:%M:%S')
+        data['dropoff_datetime'] = pd.to_datetime(self._data['dropoff_datetime'], format='%Y-%m-%d %H:%M:%S')
+        date = pd.to_datetime(start_date)
         end_date = pd.to_datetime(end_date)
-        mask = (self._data['pickup_datetime'] >= start_date) & (self._data['pickup_datetime'] < end_date)
-
+        mask = (data['pickup_datetime'] >= start_date) & (self._data['pickup_datetime'] < end_date)
         week = pd.DataFrame()
         week = self._data[mask]
         week = week.sort_values('pickup_datetime')
@@ -33,10 +36,88 @@ class cleaner:
             self._data = self._data.drop(str(x), axis=1)
         return self._data
 
-    def drop_zero_data(self, list_need):
+    def drop_anomaly(self):
+        lower_bound = 0.5
+        upper_bound = 2.5
+        self._data['avg_amount_per_minute'] = (data.fare_amount - 2.5) / (data.trip_time / np.timedelta64(1, 'm'))
         self._data = self._data.replace(np.float64(0), np.nan)
-        self._data.dropna(axis=0, inplace=True)
-        anomaly = self._data.loc[(self._data['dropoff_longitude'].isnull()) | (self._data['dropoff_latitude'].isnull()) | (self._data['pickup_longitude'].isnull()) | (self._data['pickup_latitude'].isnull())]
-        #anomaly = [self._data for x in list_need if self._data[x].isnull]
+
+        anomaly = self._data.loc[(self._data['dropoff_longitude'].isnull()) | (self._data['dropoff_latitude'].isnull()) | (self._data['pickup_longitude'].isnull()) | (self._data['pickup_latitude'].isnull()) | (self._data['trip_time'].isnull()) | (self._data['trip_distance'].isnull())]
+        anomaly = anomaly.append(self._data.loc[(data['avg_amount_per_minute'] > upper_bound) | (data['avg_amount_per_minute'] < lower_bound)])
         self._data = self._data.drop(anomaly.index)
         return self._data
+
+    def bounding_box(self):
+        #Gesamt-Rahmen in dem die Application stattfinden soll ( Breitengrad / Längengrad lat/long )
+        #Zeile 57  Parameter: upperleft , lower_right Koordinaten
+        jfk_geodata = (40.641547, -73.778118) #lowerright (lat/long)
+        ridgefield_geodata = (40.856406, -74.020642) #upperleft (lat/long)
+        self._data = data.loc[(self._data['dropoff_latitude'] > jfk_geodata[0]) &
+                               (self._data['dropoff_longitude'] < jfk_geodata[1]) &
+                               (self._data['dropoff_latitude'] < ridgefield_geodata[0]) &
+                               (self._data['dropoff_longitude'] > ridgefield_geodata[1]) &
+                               (self._data['pickup_latitude'] > jfk_geodata[0]) &
+                               (self._data['pickup_longitude'] < jfk_geodata[1]) &
+                               (self._data['pickup_latitude'] < ridgefield_geodata[0]) &
+                               (self._data['pickup_longitude'] > ridgefield_geodata[1])
+                               ]
+        return self._data
+
+
+    def train_decision_tree(self, time_regression_df, test_size, random_state, max_depth, export_testset):
+
+        y = time_regression_df["trip_time_in_mins"]
+        X = time_regression_df.ix[:, 0:6]
+        X_train, X_test, y_train, y_test = cv.train_test_split(X, y, test_size=test_size, random_state=random_state)
+
+        if bool(export_testset) is True:
+            Xy_test = pd.concat([X_test, y_test], axis=1)
+            Xy_test.to_csv('taxi_tree_test_Xy_20130506-12.csv')
+
+        t = time.time()
+
+        regtree = DecisionTreeRegressor(min_samples_split=3, random_state=random_state, max_depth=max_depth)
+        regtree.fit(X_train, y_train)
+
+
+    def export_meta_data(self, tree_model , training_duration ):
+        # Export Meta-File
+        elapsed = time.time() - t
+
+    def train_random_forest(self, time_regression_df, test_size, random_state, max_depth, export_testset):
+        y = time_regression_df["trip_time_in_mins"]
+        X = time_regression_df.ix[:, 0:6]
+        X_train, X_test, y_train, y_test = cv.train_test_split(X, y, test_size=test_size, random_state=random_state)
+
+        if bool(export_testset) is True:
+            Xy_test = pd.concat([X_test, y_test], axis=1)
+            Xy_test.to_csv('taxi_forest_test_Xy_20130506-12.csv')
+
+        rd_regtree = RandomForestRegressor(n_estimators=20, n_jobs=6, min_samples_split=3, random_state=random_state, max_depth=max_depth)
+        rd_regtree.fit(X_train, y_train)
+
+        # Export Meta-File
+
+
+def create_tree_dataframe(self, data_in_box):
+        # Baum DataFrame:
+        time_regression_df = pd.DataFrame([
+            self._data['pickup_datetime'].dt.dayofweek,
+            self._data['pickup_datetime'].dt.hour,
+            self._data['pickup_latitude'],
+            self._data['pickup_longitude'],
+            self._data['dropoff_latitude'],
+            self._data['dropoff_longitude'],
+            np.ceil(self._data['trip_time'] / np.timedelta64(1, 'm')),
+        ]).T
+
+        time_regression_df.columns = [
+            'pickup_datetime_dayofweek', 'pickup_datetime_hour',
+            'pickup_latitude', 'pickup_longitude', 'dropoff_latitude', 'dropoff_longitude',
+            'trip_time_in_mins']
+
+        return time_regression_df
+
+    def dump_tree(self, decision_model):
+        joblib.dump(decision_model , 'treelib/regtree_depth_30_PY27.pkl', protocol=2)
+

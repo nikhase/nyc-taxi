@@ -120,5 +120,5 @@ if __name__ == '__main__':
         rtdb = RealtimeDB(path, startIndex=50000, rows=20000, speed=streamspeed, reset=True)
 
     #app.debug = True
-    app.run()
-    #app.run(host='0.0.0.0')
+    #app.run()
+    app.run(host='0.0.0.0')

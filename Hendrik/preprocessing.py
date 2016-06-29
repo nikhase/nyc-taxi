@@ -7,16 +7,26 @@ import matplotlib.pyplot as plt
 import time
 from sklearn.externals import joblib
 from sklearn.ensemble import RandomForestRegressor
+import json as js
+
+global filename;
 
 
     def data_import(self, dataRoot_import):
-        data = pd.read_csv(dataRoot_import)
+        data = pd.read_csv(dataRoot_import) #
+        # Parse the datestrings to datetime-objects
         data['pickup_datetime'] = pd.to_datetime(data['pickup_datetime'], format = '%Y-%m-%d %H:%M:%S')
         data['dropoff_datetime'] = pd.to_datetime(data['dropoff_datetime'], format ='%Y-%m-%d %H:%M:%S')
         data['trip_time'] = data.dropoff_datetime - data.pickup_datetime
         return data
 
     def slice_data(self, dataRoot_data, dataRoot_week, start_date, end_date):
+        # Initialize the filename
+        filename = ('taxi_from_' + start_date + 'to_' + end_date)
+        sdata = pd.read_csv(dataRoot_data)
+        data['pickup_datetime'] = pd.to_datetime(self._data['pickup_datetime'], format='%Y-%m-%d %H:%M:%S')
+        data['dropoff_datetime'] = pd.to_datetime(self._data['dropoff_datetime'], format='%Y-%m-%d %H:%M:%S')
+        date = pd.to_datetime(start_date)
         data = pd.read_csv(dataRoot_data)
         data['pickup_datetime'] = pd.to_datetime(data['pickup_datetime'], format='%Y-%m-%d %H:%M:%S')
         data['dropoff_datetime'] = pd.to_datetime(data['dropoff_datetime'], format='%Y-%m-%d %H:%M:%S')
@@ -78,12 +88,38 @@ from sklearn.ensemble import RandomForestRegressor
 
         regtree = DecisionTreeRegressor(min_samples_split=3, random_state=random_state, max_depth=max_depth)
         regtree.fit(X_train, y_train)
+        elapsed = time.time() - t;
+        export_meta_data(regtree, X_test, y_test, elapsed)
 
         return regtree
 
-    def export_meta_data(self, tree_model , training_duration ):
+    def export_meta_data(tree_model , X_test, y_test, training_duration )
         # Export Meta-File
-        elapsed = time.time() - t
+        # Determine the tree error
+        y_pred = tree_model.predict(X_test)
+        np.linalg.norm(np.ceil(y_pred) - y_test)
+        diff = (y_pred - y_test)
+        # plt.figure(figsize=(12,10)) # not needed. set values globally
+        plt.hist(diff.values, bins=40)
+        error_distribution = ('Perzentile(%): ', [1, 5, 10, 15, 25, 50, 75, 90, 95, 99], '\n',
+              np.percentile(diff.values, [1, 5, 10, 15, 25, 50, 75, 85, 90, 95, 99]))
+        absolute_deviation = ('Absolute time deviation (in 1k): ', sum(abs(diff)) )
+        mean_deviation = absolute_deviation/len(y_pred)
+        plt.title('Simple Decision Tree Regressor')
+        plt.xlabel('deviation in minutes')
+        plt.ylabel('frequency')
+        plt.savefig((filename, '_error_plot.png')
+        tree_meta_data = {'training_time' : training_duration,
+                          'absolute_time_deviation': absolute_deviation,
+                          'mean_abs._deviation': mean_deviation,
+                          'error_distribition': error_distribution,
+                          'max_depth': tree_model.tree_.max_depth,
+                          'leaves_number': 'Amount if leaves',
+                          'split_distribution': 'Frequency of splits'}
+        # dump the metadata dictionary as a JSON-File
+        with open((filename,'_tree_metadata.json', 'w')) as fp:
+            js.dump(tree_meta_data, fp)
+
 
     def train_random_forest(self, time_regression_df, test_size, random_state, max_depth, export_testset):
         y = time_regression_df["trip_time_in_mins"]

@@ -54,8 +54,6 @@ $(document).ready(function () {
             var distanceEst = $('#distanceEstimation');
 
 
-
-
             // https://maps.googleapis.com/maps/api/geocode/json ?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA&key=AIzaSyA_MF2DqEyP732LOONDdJ0du_oaxii_8JE
             $.ajax({
                 url: "https://maps.googleapis.com/maps/api/geocode/json",
@@ -124,7 +122,6 @@ $(document).ready(function () {
                                         }
 
 
-
                                         //Go to second page
                                         window.location = "#secondpage";
 
@@ -146,44 +143,46 @@ $(document).ready(function () {
         }
 
     });
-})
+    
 
-var placeSearch, autocomplete, autocomplete2;
-var componentForm = {
-    street_number: 'short_name',
-    route: 'long_name',
-    locality: 'long_name',
-    administrative_area_level_1: 'short_name',
-    country: 'long_name',
-    postal_code: 'short_name'
-};
+    var placeSearch, autocomplete, autocomplete2;
+    var componentForm = {
+        street_number: 'short_name',
+        route: 'long_name',
+        locality: 'long_name',
+        administrative_area_level_1: 'short_name',
+        country: 'long_name',
+        postal_code: 'short_name'
+    }
+});
 
-function addMap()
-{
+function addMap() {
     console.log("Init Map")
     //Prepare Map
-    var myLatLng = {lat: 40.773382, lng: -73.982392};
-
-
-    var map = new google.maps.Map(document.getElementById('map'), {
+    var mapDiv = document.getElementById("map");
+    var latlng = new google.maps.LatLng(40.773382, -73.982392);
+    var mapOptions =
+    {
         zoom: 12,
-        center: myLatLng
-    });
+        center: latlng,
+    };
+    var map = new google.maps.Map(mapDiv, mapOptions);
+
 
     var a = {lat: lata, lng: lga};
 
     var markerA = new google.maps.Marker({
-          position: a,
-          map: map,
+        position: a,
+        map: map,
     });
 
     var b = {lat: latb, lng: lgb};
 
     var markerB = new google.maps.Marker({
-          position: b,
-          map: map,
+        position: b,
+        map: map,
     });
-
+    google.maps.event.trigger(map, "resize")
 }
 
 function initAutocomplete() {

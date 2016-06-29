@@ -123,7 +123,8 @@
         }
 
         #map {
-        height: 200px;
+        height: 400px;
+            width: auto;
       }
 }
     </style>
@@ -170,6 +171,10 @@
 	</div>
 
 	<div date-role="main" class="ui-content">
+
+        <div>
+            <a href="#thirdpage" data-role="button">View Map</a>
+        </div>
 
         <div>
             <ul data-role="listview" data-inset="true" class="appList" >
@@ -347,17 +352,14 @@
 
             </ul>
         </div>
-        <div>
-            <a data-role="button" onclick="addMap()" >View Map</a>
-            <div id="map"></div>
-        </div>
+
     </div>
 	<div data-role="footer" data-position="fixed">
 		<h4 id="timestamp"></h4>
 	</div>
 </div>
 
-<!-- Second Page Page-->
+<!-- Info Page Page-->
 <div data-role="page" id="infoPage">
 	<div data-role="header">
         <a href="#startpage" class="appButton" data-role="button" data-icon="arrow-l">Back</a>
@@ -381,6 +383,26 @@
 		<h4>Realtime Traffic Engine</h4>
 	</div>
 </div>
+
+<!-- Third Page Page-->
+<div data-role="page" id="thirdpage">
+	<div data-role="header">
+        <a href="#secondpage" class="appButton" data-role="button" data-icon="arrow-l">Back</a>
+		<p align="middle">Map View<p>
+	</div>
+
+	<div date-role="main" class="ui-content">
+        <div>
+            <a href="#thirdpage" data-role="button" onclick="addMap()">View Map</a>
+
+        <div id="map"></div>
+             </div>
+    </div>
+    <div data-role="footer" data-position="fixed">
+		<h4>Realtime Traffic Engine</h4>
+	</div>
+</div>
+
     <!--script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCrUPmutpt3muompqACV5m6f8rYcDu-lLE&signed_in=true"></script-->
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBIrSNzkA1opCqivwJYXXRwEJkwKPKKCjE&libraries=places&callback=initAutocomplete" async defer></script>
   	<script type=text/javascript>$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};</script>

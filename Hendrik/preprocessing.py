@@ -8,24 +8,43 @@ import time
 from sklearn.externals import joblib
 from sklearn.ensemble import RandomForestRegressor
 import json as js
+from geopy.distance import vincenty
 
 global filename;
 
 
-    def data_import(dataRoot_import):
+    def data_import(dataRoot_import , data_type):
         data = pd.read_csv(dataRoot_import) #
         # Parse the datestrings to datetime-objects
+
+        if data_type == 'Bike':
+            data = data.rename(columns={'starttime': 'pickup_datetime' , 'stoptime':'dropoff_datetime' ,
+                                        'start station latitude' : 'pickup_latitude' ,
+                                        'start station longitude' : 'pickup_longitude' ,
+                                        'end station latitude' : 'dropoff_latitude' ,
+                                        'end station longitude': 'dropoff_longitude' , 'tripduration': 'trip_time'})
+            data['trip_dist'] = -1
+            for i in range(0, (len(data) - 1)):
+                pickup = (data.iloc[i]['pickup_latitude'], data.iloc[i]['pickup_longitude'])
+                dropoff = (data.iloc[i]['dropoff_latitude'], data.iloc[i]['dropoff_longitude'])
+                data.set_value(i, 'trip_distance', vincenty(pickup, dropoff).meters)
+
+
         data['pickup_datetime'] = pd.to_datetime(data['pickup_datetime'], format = '%Y-%m-%d %H:%M:%S')
         data['dropoff_datetime'] = pd.to_datetime(data['dropoff_datetime'], format ='%Y-%m-%d %H:%M:%S')
-        data['trip_time'] = data.dropoff_datetime - data.pickup_datetime
+
+        if data_type == 'Taxi'
+            data['trip_time'] = data.dropoff_datetime - data.pickup_datetime
         return data
 
-    def slice_data(dataRoot_data, dataRoot_week, start_date, end_date):
+    def slice_data(dataRoot_data, dataRoot_week, start_date, end_date , data_type):
         # Initialize the filename
         filename = ('taxi_from_' + start_date + 'to_' + end_date)
-        sdata = pd.read_csv(dataRoot_data)
+        data = pd.read_csv(dataRoot_data)
+
         data['pickup_datetime'] = pd.to_datetime(self._data['pickup_datetime'], format='%Y-%m-%d %H:%M:%S')
         data['dropoff_datetime'] = pd.to_datetime(self._data['dropoff_datetime'], format='%Y-%m-%d %H:%M:%S')
+        data['trip_time'] = data.dropoff_datetime - data.pickup_datetime #überschreibt beim Fahrrad
         date = pd.to_datetime(start_date)
         data = pd.read_csv(dataRoot_data)
         data['pickup_datetime'] = pd.to_datetime(data['pickup_datetime'], format='%Y-%m-%d %H:%M:%S')

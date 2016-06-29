@@ -8,6 +8,7 @@ end_date=pd.to_datetime('2013-01-12')
 dataRoot_data = '/Users/Schlendrikovic/Documents/PyCharm_git/nyc-taxi/backend/streamer/yellow_tripdata_2013-01.csv'
 dataRoot_week = ('/Users/Schlendrikovic/Documents/Seminar/nyc-taxi/Hendrik/taxidata_weekfrom' + str(start_date)[:10] + '.csv')
 dataRoot_tree_model = '/Users/Schlendrikovic/Documents/PyCharm_git/nyc-taxi/backend/streamer/regtree_depth_30_PY27.pkl'
+data_type = 'Bike' # Bike or Taxi
 upperleft = [40.856406, -74.020642] # Ridgefield ( lat / long )
 lowerright = [40.641547, -73.778118] # JFK  ( lat / long )
 
@@ -16,12 +17,13 @@ print "Hauptdatensatz aus Verzeichnis: " , dataRoot_data
 print "Ausgeschnittene Woche gespeichert in: " , dataRoot_week
 
 
-data = cleaner.slice_data(dataRoot_data , dataRoot_week , start_date , end_date)
+data = cleaner.slice_data(dataRoot_data , dataRoot_week , start_date , end_date , data_type)
 data = cleaner.drop_anomaly(data)
 
 # Speichert alle wichtigen Header in Need und alle unwichtigen, die geloescht werden sollen in drop
 columns = data.columns.values.tolist()
-list_need = ['pickup_datetime' , 'dropoff_datetime', 'pickup_longitude' ,'trip_distance', 'trip_time_in_secs' ,  'pickup_latitude' , 'dropoff_longitude' , 'dropoff_latitude']
+list_need = ['pickup_datetime' , 'dropoff_datetime', 'pickup_longitude' ,'trip_distance', 'trip_time' ,
+             'pickup_latitude' , 'dropoff_longitude' , 'dropoff_latitude']
 list_drop = [x for x in columns if x not in list_need]
 
 data = cleaner.drop_overhead(data, list_drop)

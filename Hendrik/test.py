@@ -5,8 +5,8 @@ import pandas as pd
 # Start und End-date festlegen
 start_date = pd.to_datetime('2013-01-07')
 end_date=pd.to_datetime('2013-01-12')
-dataRoot_data = '/Users/Schlendrikovic/Documents/PyCharm_git/nyc-taxi/backend/streamer/yellow_tripdata_2013-01.csv'
-dataRoot_week = ('/Users/Schlendrikovic/Documents/Seminar/nyc-taxi/Hendrik/taxidata_weekfrom' + str(start_date)[:10] + '.csv')
+dataRoot_month_fileloc = '..data/yellow_tripdata_2014-05.csv'
+# dataRoot_week_fileloc = ('..data/'.csv')
 dataRoot_tree_model = '/Users/Schlendrikovic/Documents/PyCharm_git/nyc-taxi/backend/streamer/regtree_depth_30_PY27.pkl'
 upperleft = [40.856406, -74.020642] # Ridgefield ( lat / long )
 lowerright = [40.641547, -73.778118] # JFK  ( lat / long )
@@ -16,7 +16,7 @@ print "Hauptdatensatz aus Verzeichnis: " , dataRoot_data
 print "Ausgeschnittene Woche gespeichert in: " , dataRoot_week
 
 
-data = cleaner.slice_data(dataRoot_data , dataRoot_week , start_date , end_date)
+data = cleaner.slice_data(dataRoot_month_fileloc , dataRoot_week , start_date , end_date)
 data = cleaner.drop_anomaly(data)
 
 # Speichert alle wichtigen Header in Need und alle unwichtigen, die geloescht werden sollen in drop

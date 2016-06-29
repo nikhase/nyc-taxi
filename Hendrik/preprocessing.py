@@ -9,37 +9,35 @@ from sklearn.externals import joblib
 from sklearn.ensemble import RandomForestRegressor
 import json as js
 
-global filename;
+global filename_prefix='set_filename'
 
 
-    def data_import(dataRoot_import):
-        data = pd.read_csv(dataRoot_import) #
+    def data_import(origin_location):
+        data = pd.read_csv(origin_location) #
         # Parse the datestrings to datetime-objects
         data['pickup_datetime'] = pd.to_datetime(data['pickup_datetime'], format = '%Y-%m-%d %H:%M:%S')
         data['dropoff_datetime'] = pd.to_datetime(data['dropoff_datetime'], format ='%Y-%m-%d %H:%M:%S')
         data['trip_time'] = data.dropoff_datetime - data.pickup_datetime
         return data
 
-    def slice_data(dataRoot_data, dataRoot_week, start_date, end_date):
-        # Initialize the filename
-        filename = ('taxi_from_' + start_date + 'to_' + end_date)
-        sdata = pd.read_csv(dataRoot_data)
-        data['pickup_datetime'] = pd.to_datetime(self._data['pickup_datetime'], format='%Y-%m-%d %H:%M:%S')
-        data['dropoff_datetime'] = pd.to_datetime(self._data['dropoff_datetime'], format='%Y-%m-%d %H:%M:%S')
+    def slice_data(dataFrame, save_output_in_csv, start_date, end_date):
+        # Be aware: the end_date is not included in the dataFrame!
+        # Initialize the filename_prefix
+        global filename_prefix=('taxi_from_' + start_date + 'to_' + end_date)
+        #data = pd.read_csv(dataRoot_data)
+        dataFrame['pickup_datetime'] = pd.to_datetime(dataFrame['pickup_datetime'], format='%Y-%m-%d %H:%M:%S')
+        dataFrame['dropoff_datetime'] = pd.to_datetime(dataFrame['dropoff_datetime'], format='%Y-%m-%d %H:%M:%S')
         date = pd.to_datetime(start_date)
-        data = pd.read_csv(dataRoot_data)
-        data['pickup_datetime'] = pd.to_datetime(data['pickup_datetime'], format='%Y-%m-%d %H:%M:%S')
-        data['dropoff_datetime'] = pd.to_datetime(data['dropoff_datetime'], format='%Y-%m-%d %H:%M:%S')
         start_date = pd.to_datetime(start_date)
         end_date = pd.to_datetime(end_date)
-        mask = (data['pickup_datetime'] >= start_date) & (data['pickup_datetime'] < end_date)
-        week = pd.DataFrame()
-        week = data[mask]
-        week = week.sort_values('pickup_datetime')
-        week.reset_index(drop=True, inplace=True)
-        week.to_csv(dataRoot_week)
-        data = week
-        return data
+        mask = (dataFrame['pickup_datetime'] >= start_date) & (dataFrame['pickup_datetime'] < end_date)
+        # sliceDF = pd.DataFrame()
+        sliceDF = dataFrame[mask]
+        sliceDF = sliceDF.sort_values('pickup_datetime')
+        sliceDF.reset_index(drop=True, inplace=True)
+        if save_output_in_csv:
+            sliceDF.to_csv((filename_prefix,'.csv'))
+        return sliceDF
 
     def drop_overhead(data,list_drop):
         for x in list_drop:
@@ -104,7 +102,7 @@ global filename;
         plt.title('Simple Decision Tree Regressor')
         plt.xlabel('deviation in minutes')
         plt.ylabel('frequency')
-        plt.savefig((filename, '_error_plot.png')
+        plt.savefig((filename_prefix, '_error_plot.png')
         tree_meta_data = {'training_time' : training_duration,
                           'absolute_time_deviation': absolute_deviation,
                           'mean_abs._deviation': mean_deviation,
@@ -113,7 +111,7 @@ global filename;
                           'leaves_number': 'Amount if leaves',
                           'split_distribution': 'Frequency of splits'}
         # dump the metadata dictionary as a JSON-File
-        with open((filename,'_tree_metadata.json', 'w')) as fp:
+        with open((filename_prefix, '_tree_metadata.json', 'w')) as fp:
             js.dump(tree_meta_data, fp)
 
 

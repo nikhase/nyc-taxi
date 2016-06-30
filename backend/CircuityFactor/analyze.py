@@ -3,8 +3,19 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-df = pd.read_csv('8000_10000.csv')
+df1 = pd.read_csv('2000_4500.csv')
 
+df2 = pd.read_csv('5000_8000.csv')
+df3 = pd.read_csv('8000_10000.csv')
+df4 = pd.read_csv('100_2100.csv')
+
+"""df = df1
+df.append(df2 , ignore_index=True)
+df.append(df3, ignore_index=True)
+df.append(df4, ignore_index=True)"""
+frames = [df1, df2, df3,df4]
+
+df = pd.concat(frames)
 
 
 print(len(df))
@@ -33,7 +44,8 @@ with open("circuity4.txt", 'wb') as file:
 
 
 #plt.pyplot.style.use = 'default'
-#df['circuity'].plot.box()
-#plt.show()
+df['circuity'].plot.box()
+#plt.hist(df['circuity'], bins=20)
+plt.show()
 #factors = []
 

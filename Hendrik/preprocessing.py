@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 from sklearn import cross_validation as cv
 from sklearn.tree import DecisionTreeRegressor
-import numpy as np
+import matplotlib as plt
 import time
 from sklearn.externals import joblib
 from sklearn.ensemble import RandomForestRegressor
@@ -13,7 +13,6 @@ global filename_prefix
 filename_prefix = ''
 
 
-# filename_tree
 
 
 
@@ -46,12 +45,9 @@ def data_import(origin_location, data_type):
 
 def slice_data(data_frame, save_output_in_csv, start_date, end_date):
     # Be aware: the end_date is not included in the dataFrame!
-    # Initialize the filename_prefi
-    # data = pd.read_csv(dataRoot_data)
-    # dataFrame['pickup_datetime'] = pd.to_datetime(dataFrame['pickup_datetime'], format='%Y-%m-%d %H:%M:%S')
-    # dataFrame['dropoff_datetime'] = pd.to_datetime(dataFrame['dropoff_datetime'], format='%Y-%m-%d %H:%M:%S')
+    # amend the filename with the daterange
     global filename_prefix
-    filename_prefix = [filename_prefix, '_from_', start_date, 'to_', end_date]
+    filename_prefix = (filename_prefix + '_from_' + start_date + '_to_' + end_date)
     start_date = pd.to_datetime(start_date)
     end_date = pd.to_datetime(end_date)
     mask = (data_frame['pickup_datetime'] >= start_date) & (data_frame['pickup_datetime'] < end_date)
@@ -60,7 +56,7 @@ def slice_data(data_frame, save_output_in_csv, start_date, end_date):
     slice_df = slice_df.sort_values('pickup_datetime')
     slice_df.reset_index(drop=True, inplace=True)
     if save_output_in_csv:
-        slice_df.to_csv((filename_prefix, '.csv'))
+        slice_df.to_csv(('../data/' + filename_prefix + '.csv'))
     return slice_df
 
 
@@ -111,13 +107,13 @@ def drop_anomaly(data, save_report=True):
     data = data.drop(anomaly.index, errors='ignore')
     prior_length = len(anomaly)
 
-    anomaly.append(data.loc[(data['avg_amount_per_minute_too_low'] < lower_bound)])
+    anomaly.append(data.loc[(data['avg_amount_per_minute'] < lower_bound)])
     anomaly_report['avg_amount_per_minute_too_low'] = (len(anomaly) - prior_length)
     data = data.drop(anomaly.index, errors='ignore')
 
-    anomaly_report['overall_dropped_percentage'] = len(anomaly) / (len(anomaly) + len / data)
+    anomaly_report['overall_dropped_percentage'] = len(anomaly) / (len(anomaly) + len(data))
     if save_report:
-        with open((filename_prefix, '_anomaly_metadata.json', 'w')) as fp:
+        with open(('../reports/' + filename_prefix + '_anomaly_metadata.json'), 'w') as fp:
             js.dump(anomaly_report, fp)
 
     return data
@@ -136,22 +132,44 @@ def bounding_box(data, upperleft, lowerright):
     return data
 
 
+def create_tree_df(data):
+    # Data frame for the tree
+    time_regression_df = pd.DataFrame([
+        data['pickup_datetime'].dt.dayofweek,
+        data['pickup_datetime'].dt.hour,
+        data['pickup_latitude'],
+        data['pickup_longitude'],
+        data['dropoff_latitude'],
+        data['dropoff_longitude'],
+        np.ceil(data['trip_time'] / np.timedelta64(1, 'm')),
+    ]).T
+
+    time_regression_df.columns = [
+        'pickup_datetime_dayofweek', 'pickup_datetime_hour',
+        'pickup_latitude', 'pickup_longitude', 'dropoff_latitude', 'dropoff_longitude',
+        'trip_time']
+
+    return time_regression_df
+
+
 def train_decision_tree(time_regression_df, test_size, random_state, max_depth, export_testset):
-    y = time_regression_df["trip_time_in_mins"]
-    X = time_regression_df.ix[:, 0:6]
-    X_train, X_test, y_train, y_test = cv.train_test_split(X, y, test_size=test_size, random_state=random_state)
+    y = time_regression_df['trip_time']
+    x = time_regression_df.ix[:, 0:6]
+    x_train, x_test, y_train, y_test = cv.train_test_split(x, y, test_size=test_size, random_state=random_state)
 
-    if bool(export_testset) is True:
-        Xy_test = pd.concat([X_test, y_test], axis=1)
-        Xy_test.to_csv('taxi_tree_test_Xy_20130506-12.csv')
+    if export_testset:
+        xy_test = pd.concat([x_test, y_test], axis=1)
+        xy_test.to_csv('../data/' + filename_prefix + '_testset.csv')
 
-    t = time.time()
+    tic = time.time()
 
-    regtree = DecisionTreeRegressor(min_samples_split=3, random_state=random_state, max_depth=max_depth)
-    regtree.fit(X_train, y_train)
-    elapsed = time.time() - t;
-    export_meta_data(regtree, X_test, y_test, elapsed)
-
+    regtree = DecisionTreeRegressor(max_depth=max_depth, min_samples_split=3, random_state=random_state)
+    regtree.fit(x_train, y_train)
+    elapsed = time.time() - tic
+    print(elapsed)
+    # export_meta_data(regtree, X_test, y_test, elapsed)
+    target_location = ('../treelib/' + filename_prefix + '_tree_depth_' + str(regtree.tree_.max_depth))
+    dump_model(regtree, target_location)
     return regtree
 
 
@@ -165,7 +183,7 @@ def export_meta_data(tree_model, X_test, y_test, training_duration):
     plt.hist(diff.values, bins=40)
     error_distribution = ('Perzentile(%): ', [1, 5, 10, 15, 25, 50, 75, 90, 95, 99], '\n',
                           np.percentile(diff.values, [1, 5, 10, 15, 25, 50, 75, 85, 90, 95, 99]))
-    absolute_deviation = ('Absolute time deviation (in 1k): ', sum(abs(diff)))
+    absolute_deviation = ('Absolute time deviation: ', sum(abs(diff)))
     mean_deviation = absolute_deviation / len(y_pred)
     plt.title('Simple Decision Tree Regressor')
     plt.xlabel('deviation in minutes')
@@ -199,25 +217,5 @@ def train_random_forest(time_regression_df, test_size, random_state, max_depth, 
     return rd_regtree
 
 
-def create_tree_df(data):
-    # Baum DataFrame:
-    time_regression_df = pd.DataFrame([
-        data['pickup_datetime'].dt.dayofweek,
-        data['pickup_datetime'].dt.hour,
-        data['pickup_latitude'],
-        data['pickup_longitude'],
-        data['dropoff_latitude'],
-        data['dropoff_longitude'],
-        np.ceil(data['trip_time'] / np.timedelta64(1, 'm')),
-    ]).T
-
-    time_regression_df.columns = [
-        'pickup_datetime_dayofweek', 'pickup_datetime_hour',
-        'pickup_latitude', 'pickup_longitude', 'dropoff_latitude', 'dropoff_longitude',
-        'trip_time_in_mins']
-
-    return time_regression_df
-
-
-def dump_tree(decision_model, dataRoot_tree_model):
-    joblib.dump(decision_model, str(dataRoot_tree_model), protocol=2)
+def dump_model(decision_model, target_location):
+    joblib.dump(decision_model, (target_location + '.pkl'), protocol=2)

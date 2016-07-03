@@ -202,22 +202,34 @@ def export_meta_data(tree_model, X_test, y_test, training_duration):
     with open((filename_prefix, '_tree_metadata.json', 'w')) as fp:
         js.dump(tree_meta_data, fp)
 
+# Train a random forest regressor
+def train_random_forest(time_regression_df, test_size, random_state, max_depth, n_estimators, export_testset):
+    time_regression_df_train, time_regression_df_test = cv.train_test_split(time_regression_df, test_size=test_size,
+                                                                            random_state=random_state)
+    y_train = time_regression_df_train['trip_time']
+    x_train = time_regression_df_train.ix[:, 0:6]
+    y_test = time_regression_df_test['trip_time']
+    x_test = time_regression_df_test.ix[:, 0:6]
 
-def train_random_forest(time_regression_df, test_size, random_state, max_depth, export_testset):
-    y = time_regression_df["trip_time_in_mins"]
-    X = time_regression_df.ix[:, 0:6]
-    X_train, X_test, y_train, y_test = cv.train_test_split(X, y, test_size=test_size, random_state=random_state)
+    if export_testset:
+        xy_test = pd.concat([x_test, y_test], axis=1)
+        xy_test.to_csv('../data/' + filename_prefix + '_testset.csv')
 
-    if bool(export_testset) is True:
-        Xy_test = pd.concat([X_test, y_test], axis=1)
-        Xy_test.to_csv('taxi_forest_test_Xy_20130506-12.csv')
+    tic = time.time()
 
-    rd_regtree = RandomForestRegressor(n_estimators=20, n_jobs=6, min_samples_split=3, random_state=random_state,
+    rd_regtree = RandomForestRegressor(n_estimators=n_estimators, n_jobs=2, min_samples_split=3,
+                                       random_state=random_state,
                                        max_depth=max_depth)
-    rd_regtree.fit(X_train, y_train)
 
+    rd_regtree.fit(x_train, y_train)
+    elapsed = time.time() - tic
+    print(elapsed)
+    # export_meta_data(regtree, X_test, y_test, elapsed)
+    target_location = ('../randforlib/' + filename_prefix + str(n_estimators) + 'x_' + '_tree_depth_' +
+                       str(max_depth))
+    dump_model(rd_regtree, target_location)
     return rd_regtree
-
+S
 
 def dump_model(decision_model, target_location):
     joblib.dump(decision_model, (target_location + '.pkl'), protocol=2)

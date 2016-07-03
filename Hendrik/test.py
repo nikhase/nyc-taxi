@@ -33,8 +33,11 @@ time_regression_df = pp.create_tree_df(data)
 # either tree or random forest
 test_size = 0.1
 random_state = 99
-max_depth = 30
+max_depth = 15
+n_estimators = 20
 export_testset = True
 
-regtree = pp.train_decision_tree(time_regression_df, test_size, random_state, max_depth, export_testset)
-# rd_regtree = cleaner.train_random_forest(time_regression_df, test_size , random_state , max_depth , export_testset)
+#regtree = pp.train_decision_tree(time_regression_df, test_size, random_state, max_depth, export_testset)
+rd_regtree = pp.train_random_forest(time_regression_df=time_regression_df, test_size=test_size ,
+                                    random_state=random_state , max_depth=max_depth,n_estimators=n_estimators,
+                                    export_testset=export_testset)

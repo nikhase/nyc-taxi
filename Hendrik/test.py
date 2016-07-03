@@ -1,5 +1,9 @@
 import preprocessing as pp
-
+from sklearn import cross_validation as cv
+from sklearn.tree import DecisionTreeRegressor
+import pandas as pd
+import time
+from sklearn.externals import joblib
 
 # Parameters
 # Set start-date (included) und End-date (excluded)
@@ -12,7 +16,9 @@ lowerright = [40.641547, -73.778118]  # JFK  ( lat / long )
 data_type = 'Taxi'  # Bike or Taxi
 
 data = pp.data_import(dataRoot_month_fileloc, data_type)
+print(len(data))
 data = pp.slice_data(data, True, start_date, end_date)
+print(len(data))
 data = pp.drop_anomaly(data, True)
 
 # Saves necessary columns in cols_need, infers the unnecessary ones and saves them in cols_drop
@@ -27,6 +33,29 @@ data = pp.bounding_box(data, upperleft, lowerright)
 
 time_regression_df = pp.create_tree_df(data)
 
+#def train_decision_tree(time_regression_df, test_size, rs, md, export_testset):
+#    y = time_regression_df['trip_time']
+#    x = time_regression_df.ix[:, 0:6]
+#    x_train, x_test, y_train, y_test = cv.train_test_split(x, y, test_size=test_size, random_state=random_state)
+#
+#    # if export_testset:
+#    #    xy_test = pd.concat([x_test, y_test], axis=1)
+#    #W    xy_test.to_csv('../data/' + filename_prefix + '_testset.csv')
+#
+#    tic = time.time()
+#
+#    regtree = DecisionTreeRegressor(max_depth=md, min_samples_split=3, random_state=rs)
+#    regtree = regtree.fit(x_train.dropna(), y_train.dropna())
+#    elapsed = time.time() - tic
+#    print(elapsed)
+#    # export_meta_data(regtree, X_test, y_test, elapsed)
+#    target_location = ('../treelib/' + '_tree_depth_' + str(regtree.tree_.max_depth))
+#    dump_model(regtree, target_location)
+#    return regtree
+#    
+#def dump_model(decision_model, target_location):
+#    joblib.dump(decision_model, (target_location + '.pkl'), protocol=2)
+    
 # either tree or random forest
 test_size = 0.1
 random_state = 99

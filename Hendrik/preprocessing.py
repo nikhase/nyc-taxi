@@ -70,7 +70,7 @@ def drop_anomaly(data, save_report=True):
     lower_bound = 0.5
     upper_bound = 2.5
     data = data.replace(np.float64(0), np.nan)
-    # correct the fare amount for the initial charge of 2.5$
+    # correct the fare amount for the initial charge of 2.5$. This operation is robust to NA-values in trip_time
     data['avg_amount_per_minute'] = (data.fare_amount - 2.5) / (data.trip_time / np.timedelta64(1, 'm'))
     # remove all rows with .nan values
     # save the removed rows by condition
@@ -87,27 +87,27 @@ def drop_anomaly(data, save_report=True):
     data = data.drop(anomaly.index, errors='ignore')
     prior_length = len(anomaly)
 
-    anomaly.append(data.loc[data['pickup_longitude'].isnull() | (data['pickup_latitude'].isnull())])
-    anomaly_report['no_valid_dropoff'] = (len(anomaly) - prior_length)
+    anomaly = anomaly.append(data.loc[data['pickup_longitude'].isnull() | (data['pickup_latitude'].isnull())])
+    anomaly_report['no_valid_pickup'] = (len(anomaly) - prior_length)
     data = data.drop(anomaly.index, errors='ignore')
     prior_length = len(anomaly)
 
-    anomaly.append(data.loc[(data['trip_time'].isnull())])
-    anomaly_report['no_valid_dropoff'] = (len(anomaly) - prior_length)
+    anomaly = anomaly.append(data.loc[(data['trip_time'].isnull())])
+    anomaly_report['no_triptime'] = (len(anomaly) - prior_length)
     data = data.drop(anomaly.index, errors='ignore')
     prior_length = len(anomaly)
 
-    anomaly.append(data.loc[data['trip_distance'].isnull()])
-    anomaly_report['no_valid_dropoff'] = (len(anomaly) - prior_length)
+    anomaly = anomaly.append(data.loc[data['trip_distance'].isnull()])
+    anomaly_report['no_trip_distance'] = (len(anomaly) - prior_length)
     data = data.drop(anomaly.index, errors='ignore')
     prior_length = len(anomaly)
 
-    anomaly.append(data.loc[(data['avg_amount_per_minute'] > upper_bound)])
+    anomaly = anomaly.append(data.loc[(data['avg_amount_per_minute'] > upper_bound)])
     anomaly_report['avg_amount_per_minute_too_high'] = (len(anomaly) - prior_length)
     data = data.drop(anomaly.index, errors='ignore')
     prior_length = len(anomaly)
 
-    anomaly.append(data.loc[(data['avg_amount_per_minute'] < lower_bound)])
+    anomaly = anomaly.append(data.loc[(data['avg_amount_per_minute'] < lower_bound)])
     anomaly_report['avg_amount_per_minute_too_low'] = (len(anomaly) - prior_length)
     data = data.drop(anomaly.index, errors='ignore')
 
@@ -155,7 +155,7 @@ def create_tree_df(data):
 def train_decision_tree(time_regression_df, test_size, random_state, max_depth, export_testset):
     y = time_regression_df['trip_time']
     x = time_regression_df.ix[:, 0:6]
-    x_train, x_test, y_train, y_test = cv.train_test_split(x, y, test_size=test_size, random_state=random_state)
+    x_train, x_test, y_train, y_test = cv.train_test_split(x, y.values, test_size=test_size, random_state=random_state)
 
     if export_testset:
         xy_test = pd.concat([x_test, y_test], axis=1)

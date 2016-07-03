@@ -153,10 +153,12 @@ def create_tree_df(data):
 
 
 def train_decision_tree(time_regression_df, test_size, random_state, max_depth, export_testset):
-    y = time_regression_df['trip_time']
-    x = time_regression_df.ix[:, 0:6]
-    x_train, x_test, y_train, y_test = cv.train_test_split(x, y.values, test_size=test_size, random_state=random_state)
-
+    time_regression_df_train, time_regression_df_test = cv.train_test_split(time_regression_df, test_size=test_size, random_state=random_state)
+    y_train = time_regression_df_train['trip_time']
+    x_train = time_regression_df_train.ix[:, 0:6]
+    y_test = time_regression_df_test['trip_time']
+    x_test = time_regression_df_test.ix[:, 0:6]
+    
     if export_testset:
         xy_test = pd.concat([x_test, y_test], axis=1)
         xy_test.to_csv('../data/' + filename_prefix + '_testset.csv')

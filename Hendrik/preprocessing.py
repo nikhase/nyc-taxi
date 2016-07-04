@@ -8,6 +8,7 @@ from sklearn.externals import joblib
 from sklearn.ensemble import RandomForestRegressor
 import json as js
 from geopy.distance import vincenty
+from sklearn import tree
 
 global filename_prefix
 filename_prefix = ''
@@ -30,10 +31,7 @@ def data_import(origin_location, data_type):
                                     'end station latitude': 'dropoff_latitude',
                                     'end station longitude': 'dropoff_longitude', 'tripduration': 'trip_time'})
         data['trip_dist'] = -1
-        for i in range(0, (len(data) - 1)):
-            pickup = (data.iloc[i]['pickup_latitude'], data.iloc[i]['pickup_longitude'])
-            dropoff = (data.iloc[i]['dropoff_latitude'], data.iloc[i]['dropoff_longitude'])
-            data.set_value(i, 'trip_distance', vincenty(pickup, dropoff).meters)
+
 
     data['pickup_datetime'] = pd.to_datetime(data['pickup_datetime'], format='%Y-%m-%d %H:%M:%S')
     data['dropoff_datetime'] = pd.to_datetime(data['dropoff_datetime'], format='%Y-%m-%d %H:%M:%S')
@@ -43,7 +41,7 @@ def data_import(origin_location, data_type):
     return data
 
 
-def slice_data(data_frame, save_output_in_csv, start_date, end_date):
+def slice_data(data_frame, save_output_in_csv, start_date, end_date, data_type):
     # Be aware: the end_date is not included in the dataFrame!
     # amend the filename with the daterange
     global filename_prefix
@@ -57,6 +55,13 @@ def slice_data(data_frame, save_output_in_csv, start_date, end_date):
     slice_df.reset_index(drop=True, inplace=True)
     if save_output_in_csv:
         slice_df.to_csv(('data/' + filename_prefix + '.csv'))
+
+    if data_type == 'Bike':
+        for i in range(0, (len(slice_df) - 1)):
+            pickup = (slice_df.iloc[i]['pickup_latitude'], slice_df.iloc[i]['pickup_longitude'])
+            dropoff = (slice_df.iloc[i]['dropoff_latitude'], slice_df.iloc[i]['dropoff_longitude'])
+            slice_df.set_value(i, 'trip_distance', vincenty(pickup, dropoff).meters)
+
     return slice_df
 
 
@@ -251,3 +256,6 @@ def train_random_forest(time_regression_df, test_size, random_state, max_depth, 
 
 def dump_model(decision_model, target_location):
     joblib.dump(decision_model, (target_location + '.pkl'), protocol=2)
+
+def tree_export(regtree, time_regression_df):
+    tree.export_graphviz(regtree, out_file='figures/' + filename_prefix + '.dot', feature_names=time_regression_df.ix[:, 0:6].columns,class_names=time_regression_df.columns[6])

@@ -13,7 +13,7 @@ data_type = 'Bike'  # Bike or Taxi
 
 data = pp.data_import(dataRoot_month_fileloc, data_type)
 print(len(data))
-data = pp.slice_data(data, True, start_date, end_date)
+data = pp.slice_data(data, True, start_date, end_date , data_type)
 print(len(data))
 data = pp.drop_anomaly(data, True , data_type)
 
@@ -33,7 +33,7 @@ time_regression_df = pp.create_tree_df(data ,data_type)
 # either tree or random forest
 test_size = 0.1
 random_state = 99
-max_depth = 15
+max_depth = 5
 n_estimators = 20
 export_testset = True
 
@@ -41,12 +41,5 @@ regtree = pp.train_decision_tree(time_regression_df, test_size, random_state, ma
 #rd_regtree = pp.train_random_forest(time_regression_df=time_regression_df, test_size=test_size ,
                                   #  random_state=random_state , max_depth=max_depth,n_estimators=n_estimators,
                                    # export_testset=export_testset)
-
-# Set True if you want to visualize the tree
-tree_to_pdf = True
-if tree_to_pdf:
-
 # do not export for depth = 30. It's too complex!
-    from sklearn import tree
-
-    tree.export_graphviz(regtree, out_file='figures/tree_d15.dot', feature_names=time_regression_df.ix[:, 0:6].columns,class_names=time_regression_df.columns[6])
+pp.tree_export(regtree, time_regression_df)

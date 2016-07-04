@@ -56,7 +56,7 @@ def slice_data(data_frame, save_output_in_csv, start_date, end_date):
     slice_df = slice_df.sort_values('pickup_datetime')
     slice_df.reset_index(drop=True, inplace=True)
     if save_output_in_csv:
-        slice_df.to_csv(('../data/' + filename_prefix + '.csv'))
+        slice_df.to_csv(('data/' + filename_prefix + '.csv'))
     return slice_df
 
 
@@ -66,12 +66,14 @@ def drop_columns(data, list_drop):
     return data
 
 
-def drop_anomaly(data, save_report=True):
+def drop_anomaly(data, save_report , data_type):
     lower_bound = 0.5
     upper_bound = 2.5
     data = data.replace(np.float64(0), np.nan)
-    # correct the fare amount for the initial charge of 2.5$. This operation is robust to NA-values in trip_time
-    data['avg_amount_per_minute'] = (data.fare_amount - 2.5) / (data.trip_time / np.timedelta64(1, 'm'))
+
+
+
+
     # remove all rows with .nan values
     # save the removed rows by condition
     anomaly_report = {'no_valid_dropoff:': 0,
@@ -102,18 +104,23 @@ def drop_anomaly(data, save_report=True):
     data = data.drop(anomaly.index, errors='ignore')
     prior_length = len(anomaly)
 
-    anomaly = anomaly.append(data.loc[(data['avg_amount_per_minute'] > upper_bound)])
-    anomaly_report['avg_amount_per_minute_too_high'] = (len(anomaly) - prior_length)
-    data = data.drop(anomaly.index, errors='ignore')
-    prior_length = len(anomaly)
+    # correct the fare amount for the initial charge of 2.5$. This operation is robust to NA-values in trip_time
+    if data_type == 'Taxi':
+        data['avg_amount_per_minute'] = (data.fare_amount - 2.5) / (data.trip_time / np.timedelta64(1, 'm'))
+        anomaly = anomaly.append(data.loc[(data['avg_amount_per_minute'] > upper_bound)])
+        anomaly_report['avg_amount_per_minute_too_high'] = (len(anomaly) - prior_length)
+        data = data.drop(anomaly.index, errors='ignore')
+        prior_length = len(anomaly)
 
-    anomaly = anomaly.append(data.loc[(data['avg_amount_per_minute'] < lower_bound)])
-    anomaly_report['avg_amount_per_minute_too_low'] = (len(anomaly) - prior_length)
-    data = data.drop(anomaly.index, errors='ignore')
+        anomaly = anomaly.append(data.loc[(data['avg_amount_per_minute'] < lower_bound)])
+        anomaly_report['avg_amount_per_minute_too_low'] = (len(anomaly) - prior_length)
+        data = data.drop(anomaly.index, errors='ignore')
+   # else:
+       # anomaly_report['avg_amount_per_minute_too_high'] , anomaly_report['avg_amount_per_minute_too_low'] = 'Bike'
 
     anomaly_report['overall_dropped_percentage'] = len(anomaly) / (len(anomaly) + len(data))
     if save_report:
-        with open(('../reports/' + filename_prefix + '_anomaly_metadata.json'), 'w') as fp:
+        with open(('reports/' + filename_prefix + '_anomaly_metadata.json'), 'w') as fp:
             js.dump(anomaly_report, fp)
 
     return data
@@ -132,16 +139,27 @@ def bounding_box(data, upperleft, lowerright):
     return data
 
 
-def create_tree_df(data):
+def create_tree_df(data, data_type):
     # Data frame for the tree
-    time_regression_df = pd.DataFrame([
-        data['pickup_datetime'].dt.dayofweek,
-        data['pickup_datetime'].dt.hour,
-        data['pickup_latitude'],
-        data['pickup_longitude'],
-        data['dropoff_latitude'],
-        data['dropoff_longitude'],
-        np.ceil(data['trip_time'] / np.timedelta64(1, 'm')),
+    if data_type == 'Taxi':
+        time_regression_df = pd.DataFrame([
+            data['pickup_datetime'].dt.dayofweek,
+            data['pickup_datetime'].dt.hour,
+            data['pickup_latitude'],
+            data['pickup_longitude'],
+            data['dropoff_latitude'],
+            data['dropoff_longitude'],
+            np.ceil(data['trip_time'] / np.timedelta64(1, 'm')),
+        ]).T
+    if data_type =='Bike':
+        time_regression_df = pd.DataFrame([
+            data['pickup_datetime'].dt.dayofweek,
+            data['pickup_datetime'].dt.hour,
+            data['pickup_latitude'],
+            data['pickup_longitude'],
+            data['dropoff_latitude'],
+            data['dropoff_longitude'],
+            data['trip_time']
     ]).T
 
     time_regression_df.columns = [
@@ -161,7 +179,7 @@ def train_decision_tree(time_regression_df, test_size, random_state, max_depth, 
     
     if export_testset:
         xy_test = pd.concat([x_test, y_test], axis=1)
-        xy_test.to_csv('../data/' + filename_prefix + '_testset.csv')
+        xy_test.to_csv('data/' + filename_prefix + '_testset.csv')
 
     tic = time.time()
 
@@ -170,7 +188,7 @@ def train_decision_tree(time_regression_df, test_size, random_state, max_depth, 
     elapsed = time.time() - tic
     print(elapsed)
     # export_meta_data(regtree, X_test, y_test, elapsed)
-    target_location = ('../treelib/' + filename_prefix + '_tree_depth_' + str(regtree.tree_.max_depth))
+    target_location = ('treelib/' + filename_prefix + '_tree_depth_' + str(regtree.tree_.max_depth))
     dump_model(regtree, target_location)
     return regtree
 
@@ -213,7 +231,7 @@ def train_random_forest(time_regression_df, test_size, random_state, max_depth, 
 
     if export_testset:
         xy_test = pd.concat([x_test, y_test], axis=1)
-        xy_test.to_csv('../data/' + filename_prefix + '_testset.csv')
+        xy_test.to_csv('data/' + filename_prefix + '_testset.csv')
 
     tic = time.time()
 
@@ -225,11 +243,11 @@ def train_random_forest(time_regression_df, test_size, random_state, max_depth, 
     elapsed = time.time() - tic
     print(elapsed)
     # export_meta_data(regtree, X_test, y_test, elapsed)
-    target_location = ('../randforlib/' + filename_prefix + str(n_estimators) + 'x_' + '_tree_depth_' +
+    target_location = ('randforlib/' + filename_prefix + str(n_estimators) + 'x_' + '_tree_depth_' +
                        str(max_depth))
     dump_model(rd_regtree, target_location)
     return rd_regtree
-S
+
 
 def dump_model(decision_model, target_location):
     joblib.dump(decision_model, (target_location + '.pkl'), protocol=2)

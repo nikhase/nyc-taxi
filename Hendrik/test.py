@@ -6,7 +6,7 @@ import preprocessing as pp
 start_date = '2014-05-06'
 end_date = '2014-05-13'
 # The '..' indicate the path to the parent directory
-dataRoot_month_fileloc = 'data/bike_tripdata_2014-05.csv'
+dataRoot_month_fileloc = '../data/2014-05 - Citi Bike trip data.csv'
 upperleft = [40.856406, -74.020642]  # Ridgefield ( lat / long )
 lowerright = [40.641547, -73.778118]  # JFK  ( lat / long )
 data_type = 'Bike'  # Bike or Taxi
@@ -46,7 +46,7 @@ regtree = pp.train_decision_tree(time_regression_df= time_regression_df, test_si
 
 
 # Set True if you want to visualize the tree
-tree_to_pdf = True
+tree_to_pdf = False
 
 if tree_to_pdf:
     # do not export for depth = 30. It's too complex!

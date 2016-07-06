@@ -54,7 +54,7 @@ def slice_data(data_frame, save_output_in_csv, start_date, end_date):
     slice_df = slice_df.sort_values('pickup_datetime')
     slice_df.reset_index(drop=True, inplace=True)
     if save_output_in_csv:
-        slice_df.to_csv(('data/' + filename_prefix + '.csv'))
+        slice_df.to_csv(('../data/' + filename_prefix + '.csv'))
     return slice_df
 
 
@@ -177,7 +177,7 @@ def train_decision_tree(time_regression_df, test_size, random_state, max_depth, 
     
     if export_testset:
         xy_test = pd.concat([x_test, y_test], axis=1)
-        xy_test.to_csv('data/' + filename_prefix + '_testset.csv')
+        xy_test.to_csv('../data/' + filename_prefix + '_testset.csv')
 
     tic = time.time()
 

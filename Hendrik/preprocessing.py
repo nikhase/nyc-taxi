@@ -21,7 +21,7 @@ def data_import(origin_location, data_type):
     global filename_prefix
     filename_prefix = data_type
     data = pd.read_csv(origin_location)  #
-    # Parse the datestrings to datetime-objects
+    # parse the datestrings to datetime-objects
 
     if data_type == 'Bike':
         data = data.rename(columns={'starttime': 'pickup_datetime', 'stoptime': 'dropoff_datetime',
@@ -29,12 +29,13 @@ def data_import(origin_location, data_type):
                                     'start station longitude': 'pickup_longitude',
                                     'end station latitude': 'dropoff_latitude',
                                     'end station longitude': 'dropoff_longitude', 'tripduration': 'trip_time'})
+        # create new column and use invalid value minus one for consistency checks
         data['trip_dist'] = -1
 
 
     data['pickup_datetime'] = pd.to_datetime(data['pickup_datetime'], format='%Y-%m-%d %H:%M:%S')
     data['dropoff_datetime'] = pd.to_datetime(data['dropoff_datetime'], format='%Y-%m-%d %H:%M:%S')
-
+    # Taxi data has no recorded column for trip time. Needs to be calculated.
     if data_type == 'Taxi':
         data['trip_time'] = data.dropoff_datetime - data.pickup_datetime
     return data
@@ -54,7 +55,7 @@ def slice_data(data_frame, save_output_in_csv, start_date, end_date, data_type):
     slice_df.reset_index(drop=True, inplace=True)
     if save_output_in_csv:
         slice_df.to_csv(('data/' + filename_prefix + '.csv'))
-
+    # bike data has no recorded column for trip distance. Needs to be calculated via vincenty distance. More accurate than L2-norm.
     if data_type == 'Bike':
         for i in range(0, (len(slice_df) - 1)):
             pickup = (slice_df.iloc[i]['pickup_latitude'], slice_df.iloc[i]['pickup_longitude'])
@@ -63,7 +64,7 @@ def slice_data(data_frame, save_output_in_csv, start_date, end_date, data_type):
 
     return slice_df
 
-
+# drop unused columns
 def drop_columns(data, list_drop):
     for x in list_drop:
         data = data.drop(str(x), axis=1)
@@ -73,6 +74,7 @@ def drop_columns(data, list_drop):
 def drop_anomaly(data, save_report , data_type):
     lower_bound = 0.5
     upper_bound = 2.5
+    # replace all zeros with nan, to flag them as missing values
     data = data.replace(np.float64(0), np.nan)
 
 
@@ -119,8 +121,6 @@ def drop_anomaly(data, save_report , data_type):
         anomaly = anomaly.append(data.loc[(data['avg_amount_per_minute'] < lower_bound)])
         anomaly_report['avg_amount_per_minute_too_low'] = (len(anomaly) - prior_length)
         data = data.drop(anomaly.index, errors='ignore')
-   # else:
-       # anomaly_report['avg_amount_per_minute_too_high'] , anomaly_report['avg_amount_per_minute_too_low'] = 'Bike'
 
     anomaly_report['overall_dropped_percentage'] = len(anomaly) / (len(anomaly) + len(data))
     if save_report:
@@ -129,7 +129,7 @@ def drop_anomaly(data, save_report , data_type):
 
     return data
 
-
+# assure that all trips have a valid start and endpoint inside our scope
 def bounding_box(data, upperleft, lowerright):
     data = data.loc[(data['dropoff_latitude'] > lowerright[0]) &
                     (data['dropoff_longitude'] < lowerright[1]) &
@@ -202,8 +202,8 @@ def train_decision_tree(time_regression_df, test_size, random_state, max_depth, 
 
 
 def export_meta_data(tree_model, X_test, y_test, training_duration):
-    # Export Meta-File
-    # Determine the tree error
+    # export Meta-File
+    # determine the tree error
     y_pred = tree_model.predict(X_test)
     np.linalg.norm(np.ceil(y_pred) - y_test)
     diff = (y_pred - y_test)
@@ -228,7 +228,7 @@ def export_meta_data(tree_model, X_test, y_test, training_duration):
     with open((filename_prefix, '_tree_metadata.json', 'w')) as fp:
         js.dump(tree_meta_data, fp)
 
-# Train a random forest regressor
+# train a random forest regressor
 def train_random_forest(time_regression_df, test_size, random_state, max_depth, n_estimators, export_testset):
     time_regression_df_train, time_regression_df_test = cv.train_test_split(time_regression_df, test_size=test_size,
                                                                             random_state=random_state)
@@ -258,9 +258,9 @@ def train_random_forest(time_regression_df, test_size, random_state, max_depth, 
     dump_model(rd_regtree, target_location)
     return rd_regtree
 
-
+# dump as pickle object
 def dump_model(decision_model, target_location):
     joblib.dump(decision_model, (target_location + '.pkl'), protocol=2)
-
+# Tree visualisation as .dot file
 def tree_export(regtree, time_regression_df):
     tree.export_graphviz(regtree, out_file='figures/' + filename_prefix + '.dot', feature_names=time_regression_df.ix[:, 0:6].columns,class_names=time_regression_df.columns[6])

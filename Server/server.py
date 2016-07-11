@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 from flask import Flask, jsonify, render_template, request, abort, send_from_directory, Response
-# import application.application as ap
+import application.application as ap
 from RealtimeDB.realtimedb import RealtimeDB
 import datetime as dt
 
@@ -35,6 +35,7 @@ def get_info():
                 delta = dt.datetime.now() - rtdb.initTimestamp
                 basetime = rtdb.graph.baseTime + delta * streamspeed
                 params['timestamp'] = str(basetime)
+                result = ap.search(params)
                 result['info'] = params
             else:
 
@@ -100,13 +101,13 @@ def badRequest(message ='No Error message!'):
 # Start server
 if __name__ == '__main__':
     # Flag to use Realtime Data
-    realtime = False
+    realtime = True
 
     #Define the Speed of the Datastream
     streamspeed= 2
 
     # Flag to use hard coded result for frontend testing
-    hardcodedResult = True
+    hardcodedResult = False
 
     # @@@Check if Database is reachable
 

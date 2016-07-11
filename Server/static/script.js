@@ -93,7 +93,14 @@ $(document).ready(function () {
                                     url: "/search?" + geo,
                                     method: 'get',
                                     success: function (data) {
-                                        cartime.html(data.taxi.historic);
+                                        if (data.taxi.realtime != "0:00:00")
+                                        {
+                                            cartime.html(data.taxi.realtime);
+                                        }
+                                        else
+                                        {
+                                            cartime.html(data.taxi.historic);
+                                        }
                                         realtime.html(data.taxi.realtime);
                                         historic.html(data.taxi.historic);
                                         cab_price.html("$ " + data.prices.yellow_cab);
@@ -110,7 +117,7 @@ $(document).ready(function () {
                                         walkingtime.html(data.walking.estimation);
                                         walking_calories.html(data.calories.walking);
 
-                                        timestamp.html(data.info.timestamp);
+                                        timestamp.html(data.info.timestamp.split('.')[0]);
                                         distanceEst.html(data.estimated_distance + " Miles");
 
 

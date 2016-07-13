@@ -41,7 +41,7 @@ def get_info():
 
                 # Create Hard Coded Result
                 # Just for testing purposes
-                # Not entire backend needed to test frontend
+                # Not entire Tools needed to test frontend
                 result ={}
 
                 prices = {}
@@ -113,12 +113,13 @@ if __name__ == '__main__':
 
 
     if realtime:
-        # Location for the csv File
+        # Location for the csv File for the Real-time Stream
         path = "/Users/larshelin/Documents/Studium/Master/Semester 3/Seminar/Data/taxi_oneweekfrom20140505.csv"
 
         # Configures, Start and Runs the Realtime Data stream
         rtdb = RealtimeDB(path, startIndex=50000, rows=20000, speed=streamspeed, reset=True)
 
     #app.debug = True
+
+    # Run App on Localhost
     app.run()
-    # app.run(host='0.0.0.0')

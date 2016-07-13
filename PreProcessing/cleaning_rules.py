@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-event = pd.read_csv('/Users/Schlendrikovic/Documents/PyCharm_git/nyc-taxi/backend/streamer/yellow_tripdata_2013-01.csv', nrows = 1)
+event = pd.read_csv('/Users/Schlendrikovic/Documents/PyCharm_git/nyc-taxi/Tools/streamer/yellow_tripdata_2013-01.csv', nrows = 1)
 event['pickup_datetime'] =pd.to_datetime(event['pickup_datetime'], format = '%Y-%m-%d %H:%M:%S')
 event['dropoff_datetime'] =pd.to_datetime(event['dropoff_datetime'], format = '%Y-%m-%d %H:%M:%S')
 

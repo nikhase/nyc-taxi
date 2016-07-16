@@ -83,7 +83,7 @@ $(document).ready(function () {
                                 $('#errorBox').show();
                                 $('#errortext').text("Not so fast! Search Again");
                             }
-                            else if (lata < 40.856406 || latb < 40.856406 || lga > -74.020642|| lgb > -74.020642 || lata > 40.856406|| latb > 40.856406|| lga < -73.778118|| lgb < -73.778118) {
+                            else if (lata > 40.856406 || latb > 40.856406 || lga < -74.020642|| lgb < -74.020642 || lata < 40.641547|| latb < 40.641547|| lga > -73.778118|| lgb > -73.778118) {
                                 $('#errorBox').show();
                                 $('#errortext').text("Please choose a Location within New York City");
                                 console.log("Nicht New York")

@@ -1,0 +1,1 @@
+var lata, lga, latb, lgb, geo;

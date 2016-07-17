@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+    <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+    <style>
+        #icons {
+            height: 60px;
+            width: 60px;
+            margin: 10px;
+        }
+        .ui-header .ui-btn-left {
+            top: 0.6em;
+        }
+        .ui-page .ui-header {
+            background: #660000 !important;
+            margin: 0 0 0 0;
+            text-shadow:0 0 0 !important;
+            color: #ffe066;
+        }
+
+        .ui-page .ui-footer {
+            background: #660000 !important;
+            margin: 0 0 0 0;
+            text-shadow:0 0 0 !important;
+            color: #ffe066;
+        }
+
+        .ui-page {
+            background:#fff5cc;
+        background-image:url(static/manhattan.png);
+            background-size: 90% auto;
+            background-repeat: no-repeat;
+              background-position: 50% 80%;
+        /*background-size:cover;*/
+        }
+
+         /*Custom Font Style */
+        .normalAppText{
+            text-shadow:0 0 0 !important;
+            color: #660000;
+        }
+
+        /*Custom Buttons */
+        .appButton{
+            color: #660000 !important;
+            text-shadow:0 0 0 !important;
+            background: #ffe680 !important;
+            border-color: #660000 !important;
+        }
+
+        /*Info Box that shows Errors */
+        .infoTextDiv {
+            border-style: solid;
+            border-width: 5px;
+            border-color: black;
+            margin-left: 10%;
+            width:80%;
+            height: 20%;
+            text-shadow: 0 0 0 !important;
+            color: #ffe066;
+            background: #660000;
+            display: none;
+            border-radius: 5px;
+            border: 2px solid #660000;
+        }
+
+         /*Custom Buttons */
+        .appLiDivider {
+            text-decoration:  none;
+            background: #cca300 !important;
+            text-shadow:0 0 0 !important;
+            border-color: black;
+            border: none;
+            color: #660000;
+
+        }
+
+        .appList{
+            background: #ffe680;
+            border-style: solid;
+            border-width: 5px;
+            border-color: black;
+            text-shadow:0 0 0 !important;
+        }
+
+        .appListSubItem {
+            color: #660000 !important;
+            text-shadow:0 0 0 !important;
+            background: #ffe680 !important;
+            border: none;
+            text-shadow:0 0 0 !important;
+        }
+        .ui-page-theme-a .ui-btn {
+             color: black !important;
+            text-shadow:0 0 0 !important;
+            background: #ffe066!important;
+            border: none;
+            text-shadow:0 0 0 !important;
+        }
+
+        .ui-page-theme-a .ui-body-inherit {
+            color: black !important;
+            text-shadow:0 0 0 !important;
+            background: transparent;
+            border: none;
+            text-shadow:0 0 0 !important;
+        }
+        /*
+        .ui-page-theme-a .ui-bar-inherit {
+            border: none;
+        }*/
+
+        .textDiv {
+            background:  rgba(119, 113, 113, 0.8);
+            height: 80%;
+            width: 100%;
+            border-radius: 5px;
+            border: 2px solid #660000;
+        }
+
+        #map {
+        height: 400px;
+            width: auto;
+      }
+}
+    </style>
+</head>
+
+<body>
+    <!-- Main Page-->
+ <div data-role="page" id="startpage">
+	<div data-role="header">
+		<h1>A2B - NYC</h1>
+	</div>
+
+	<div date-role="main" class="ui-content">
+        <div align="center">
+            <h1 class="normalAppText">Plan your Trip</h1>
+            <p class="normalAppText">Enter your starting point and your destination:</p>
+        </div>
+        <div >
+            <label for="autocomplete"><b class="normalAppText">Starting Point</b></label>
+            <input type="text" onFocus="geolocate()" name="location" id="autocomplete" placeholder="Choose your starting location" value="" data-mini="true" maxlength="80" data-wrapper-class="ui-custom" />
+
+            <label for="autocomplete2"><b class="normalAppText">Destination</b></label>
+            <input type="text" onFocus="geolocate()" name="end_location" id="autocomplete2" placeholder="Choose your destination" value="" data-mini="true" maxlength="80" data-wrapper-class="ui-custom" />
+
+            <a class="appButton" data-role="button" id="btnGetGeo" >Search</a>
+        </div>
+        <div id="errorBox" align="center" class="infoTextDiv">
+            <p id="errortext"></p>
+        </div>
+    </div>
+
+	<div data-role="footer" data-position="fixed">
+        <center>
+         <a href="#infoPage" class="appButton" data-role="button" data-icon="info">About</a>
+        </center>
+	</div>
+</div>
+
+<!-- Second Page Page-->
+<div data-role="page" id="secondpage">
+	<div data-role="header">
+        <a href="#startpage" class="appButton" data-role="button" data-icon="arrow-l">Back</a>
+		<p align="middle">Your Trip Data</p>
+	</div>
+
+	<div date-role="main" class="ui-content">
+
+        <div>
+            <a href="#thirdpage" data-role="button">View Map</a>
+        </div>
+
+        <div>
+            <ul data-role="listview" data-inset="true" class="appList" >
+                <li data-role="list-divider" data-inset="false" class="appLiDivider">
+                    <table>
+                        <tr>
+                            <td rowspan="2">
+                                <img id="icons" style="height: 50px; width:auto;" src="{{url_for('static', filename='a2b.png') }}" />
+                            </td>
+                            <td>
+                                <h2 style="font-size: 16px">Distance Estimation</h2>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <p style="font-size: 13px" id="distanceEstimation"></p>
+                            </td>
+                        </tr>
+
+                    </table>
+                </li>
+
+                <!-- Item 1: Car -->
+                <li data-role="list-divider" data-inset="false" class="appLiDivider">
+                    <table>
+                        <tr>
+                            <td rowspan="2">
+                                <img id="icons" style="height: 50px; width:auto;" src="{{url_for('static', filename='taxi.png') }}" />
+                            </td>
+                            <td>
+                                <h2 style="font-size: 16px">Car</h2>
+                            </td>
+                            <td width="30%"></td>
+                            <td rowspan="2" align="right">
+                                <img id="green" style="height: 50px; width:auto; display: none;" src="{{url_for('static', filename='light-green.png') }}" />
+                                <img id="orange" style="height: 50px; width:auto; display: none;" src="{{url_for('static', filename='light-orange.png') }}" />
+                                <img id="red" style="height: 50px; width:auto; display: none;" src="{{url_for('static', filename='light-red.png') }}" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <p style="font-size: 13px">Estimation</p>
+                            </td>
+                            <td>
+                                <p style="font-size: 13px" id="cartime"></p>
+                            </td>
+                        </tr>
+
+                    </table>
+                </li>
+                <li data-role="collapsible" class="appListSubItem">
+
+                    <h3 font-size="-2">Info:</h3>
+                    <table >
+                        <tr>
+                            <td width="100px">
+                                <h2>Time Info</h2>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="100px">
+                                Real-time Traffic:
+                            </td>
+                            <td id="realtime_traffic"></td>
+                        </tr>
+                        <tr>
+                            <td width="100px">
+                                Historic Traffic:
+                            </td>
+                            <td id="historic_traffic"></td>
+                        </tr>
+                        <tr>
+                            <td width="100px">
+                                <h2>Price Info</h2>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="100px">
+                                Yellow Cab:
+                            </td>
+                            <td id="cab_price"></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                UberX:
+                            </td>
+                            <td id="uberx_price"></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                UberXL:
+                            </td>
+                            <td id="uberxl_price"></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                UberSUV:
+                            </td>
+                            <td id="ubersuv_price"></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                UberBlack:
+                            </td>
+                            <td id="uberblack_price"></td>
+                        </tr>
+                    </table>
+                </li>
+
+                <!-- Item 2: Bike -->
+                 <li data-role="list-divider" class="appLiDivider">
+                    <table>
+                        <tr>
+                            <td rowspan="2">
+                                <img id="icons" style="height: 50px; width:auto;" src="{{url_for('static', filename='bike.png') }}" />
+                            </td>
+                            <td>
+                                <h2 style="font-size: 16px">Bike</h2>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <p style="font-size: 13px">Estimation</p>
+                            </td>
+                            <td>
+                                <p style="font-size: 13px" id="biketime"></p>
+                            </td>
+                        </tr>
+                    </table>
+                        </li>
+                </li>
+                <li data-role="collapsible" class="appListSubItem">
+                    <h3 font-size="-2">Info:</h3>
+                    <table>
+                        <tr>
+                            <td width="100px">
+                                Price:
+                            </td>
+                            <td id="bike_price"></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Calories:
+                            </td>
+                            <td id="bike_calories"></td>
+                        </tr>
+
+                    </table>
+                </li>
+
+                <!-- Item 3: Walking -->
+                 <li data-role="list-divider" class="appLiDivider">
+                    <table>
+                        <tr>
+                            <td rowspan="2">
+                                <img id="icons" style="height: 50px; width:auto;" src="{{url_for('static', filename='walk.png') }}" />
+                            </td>
+                            <td>
+                                <h2 style="font-size: 16px">Walking</h2>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <p style="font-size: 13px">Estimation</p>
+                            </td>
+                            <td>
+                                <p style="font-size: 13px" id="walkingtime"></p>
+                            </td>
+                        </tr>
+                    </table>
+                        </li>
+                </li>
+                <li data-role="collapsible" class="appListSubItem">
+                    <h3 font-size="-2">Info:</h3>
+                    <table>
+                        <tr>
+                            <td width="100px">
+                                Calories:
+                            </td>
+                            <td id="walking_calories"></td>
+                        </tr>
+                    </table>
+                </li>
+
+            </ul>
+        </div>
+
+    </div>
+	<div data-role="footer" data-position="fixed">
+		<h4 id="timestamp"></h4>
+	</div>
+</div>
+
+<!-- Info Page Page-->
+<div data-role="page" id="infoPage">
+	<div data-role="header">
+        <a href="#startpage" class="appButton" data-role="button" data-icon="arrow-l">Back</a>
+		<p align="middle">About this App<p>
+	</div>
+
+	<div date-role="main" class="ui-content">
+        <div class="textDiv">
+        <p style="margin: 10px; " class="normalAppText">
+            <strong style="font-size: 20px">General Information:</strong> <br><br>
+            The Application "A2B" was created as part of a seminar at the <a href="https://www.fzi.de/startseite/">FZI</a>.</br>
+            It was created to make use of the Yellow Cab Trip Data that is provided by New York City. </br>
+            The Application tries to leverage real-time datastream as well as historic data in order to predict unexpected events.
+            These events may be traffic, a construction site or some other incident.
+            Being able to detect these events as well as providing information on several means of transportation, the user
+            is always able to choose the best way to get from A2B
+            <br><br>
+            <strong style="font-size: 20px">How our data works:</strong><br><br>
+            <strong> Estimated Distance: </strong> <br>
+            Based on our latitude and longitude data we know the exact beeline between the starting point and the destination.
+            By analyzing 10,000 sample distances between a starting point and ending point in New York City we calculated a factor of 1.4 by which we multiply the beeline to obtain the estimated distance needed “on the road”.
+            <br><br>
+            <strong>Real-time traffic time and historic time: </strong> <br>
+            The historic time for a trip is based on similar taxi trips between the entered locations in our dataset of 2013.
+            The real-time traffic time especially considers similar taxi trips which occurred within the last 30 minutes.
+            Thus we can compare both times and detect anomalies which could be caused by traffic jams, construction sites, accidents or other incidents.
+            To visualize the discrepancy between real-time and historic time we introduced traffic lights: <br><br>
+            Green: Real-time max. 25% slower <br>
+            Yellow: Real-time max. 50% slower <br>
+            Red: Real-time at least 50% slower
+            <br><br>
+            <strong> Bike Price: </strong><br>
+            For the bike price we assumed that our user is already an owner of an annular membership at citibikenyc which values $14.95 per month and includes unlimited 45-minutes rides.
+            Rides longer than 45 minutes incur extra fees: $2.50 for the first additional 30 minutes, etc. For more information on bike pricing check <a href="https://www.citibikenyc.com/pricing">here</a>
+            <br><br>
+            <strong>Calories:</strong><br>
+            Our calorie count is based on an average person with a weight of 180 pounds.
+        </p>
+        </div>
+
+    </div>
+    <div data-role="footer" data-position="fixed">
+		<h4>Real-time Traffic Engine</h4>
+	</div>
+</div>
+
+<!-- Third Page Page-->
+<div data-role="page" id="thirdpage">
+	<div data-role="header">
+        <a href="#secondpage" class="appButton" data-role="button" data-icon="arrow-l">Back</a>
+		<p align="middle">Map View<p>
+	</div>
+
+	<div date-role="main" class="ui-content">
+        <div>
+            <a href="#thirdpage" data-role="button" onclick="addMap()">View Map</a>
+
+        <div id="map"></div>
+             </div>
+    </div>
+    <div data-role="footer" data-position="fixed">
+		<h4>Real-time Traffic Engine</h4>
+	</div>
+</div>
+
+    <!--script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCrUPmutpt3muompqACV5m6f8rYcDu-lLE&signed_in=true"></script-->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBIrSNzkA1opCqivwJYXXRwEJkwKPKKCjE&libraries=places&callback=initAutocomplete" async defer></script>
+  	<script type=text/javascript>$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};</script>
+    <script type=text/javascript src="{{url_for('static', filename='properties.js') }}"></script>
+  	<script type=text/javascript src="{{url_for('static', filename='script.js') }}"></script>
+
+</body>
+
+</html>
